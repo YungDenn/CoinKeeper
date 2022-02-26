@@ -15,7 +15,7 @@ object FinanceItemListRepositoryImpl: FinanceItemRepository {
 
     init {
         for (i in 0 until 10) {
-            val item = FinanceItem("Test$i","test$i", i.toDouble(),0)
+            val item = FinanceItem("Test$i","test$i", i.toDouble(),1)
             addItem(item)
         }
     }

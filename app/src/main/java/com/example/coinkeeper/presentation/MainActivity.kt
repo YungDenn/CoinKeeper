@@ -3,20 +3,27 @@ package com.example.coinkeeper.presentation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coinkeeper.R
 import com.example.coinkeeper.presentation.FinanceListAdapter
 
+
 class MainActivity : AppCompatActivity() {
-    //private lateinit var viewModel
+
+    private lateinit var viewModel: MainViewModel
     private lateinit var financeListAdapter: FinanceListAdapter
-    private var shopItemContainer: FragmentContainerView? = null
+    //private var financeItemContainer: FragmentContainerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupRecyclerView()
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel.financeList.observe(this) {
+            financeListAdapter.submitList(it)
+        }
 
     }
 
