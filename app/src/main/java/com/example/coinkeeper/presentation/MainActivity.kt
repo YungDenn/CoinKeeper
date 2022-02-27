@@ -36,16 +36,11 @@ class MainActivity : AppCompatActivity() {
     }
     private fun setupBottomNavigationView(){
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
 
-        //val appBarConfiguration = AppBarConfiguration(setOf(R.id.home_Fragment, R.id.stat_Fragment, R.id.info_Fragment))
         setupActionBarWithNavController(navController)
-        //setupActionBarWithNavController(navController, appBarConfiguration)
-
         bottomNavigationView.setupWithNavController(navController)
-        //bottomNavigationMenu.setupWithNavController(navController)
     }
 
     //private fun setupRecyclerView() {

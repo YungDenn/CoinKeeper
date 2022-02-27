@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/add_Fragment"
-        android:name="com.example.coinkeeper.Add_Fragment"
+        android:name="com.example.coinkeeper.presentation.Add_Fragment"
         android:label="fragment_add_"
         tools:layout="@layout/fragment_add_" />
     <fragment
         android:id="@+id/info_Fragment"
-        android:name="com.example.coinkeeper.info_Fragment"
+        android:name="com.example.coinkeeper.presentation.info_Fragment"
         android:label="fragment_info_"
         tools:layout="@layout/fragment_info_" />
     <fragment
         android:id="@+id/statistics_Fragment"
-        android:name="com.example.coinkeeper.statistics_Fragment"
+        android:name="com.example.coinkeeper.presentation.statistics_Fragment"
         android:label="fragment_statistics_"
         tools:layout="@layout/fragment_statistics_" />
 </navigation>
