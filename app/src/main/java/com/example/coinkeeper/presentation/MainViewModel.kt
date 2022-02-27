@@ -12,7 +12,7 @@ class MainViewModel: ViewModel() {
     private val repository = FinanceItemListRepositoryImpl
 
     private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
-    private val deleteFinanceItemUseCase =DeleteFinanceItemUseCase(repository)
+    private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
     private val editFinanceItemUseCase = EditFinanceItemUseCase(repository)
 
     val financeList = getFinanceListUseCase.getFinanceList()

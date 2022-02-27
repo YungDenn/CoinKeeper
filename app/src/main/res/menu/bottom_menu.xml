@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/add_Fragment"
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="Add"
+        android:orderInCategory="2"/>
+    <item
+        android:id="@+id/statistics_Fragment"
+        android:icon="@drawable/ic_baseline_stat_24"
+        android:title="Statistics"
+        android:orderInCategory="1"/>
+    <item
+        android:id="@+id/info_Fragment"
+        android:icon="@drawable/ic_baseline_info_24"
+        android:title="Information"
+        android:orderInCategory="3"/>
+</menu>
