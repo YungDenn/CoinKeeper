@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">CoinKeeper</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_name_add_item">Name:</string>
+    <string name="hint_count_add_item">Count:</string>
+    <string name="hint_bSave_add_item">Save</string>
+    <string name="hint_comment_add_item">Comment:</string>
 
 </resources>

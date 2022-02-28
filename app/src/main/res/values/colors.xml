@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="income_finance_item">#4AE677</color>
     <color name="expense_finance_item">#E64A6E</color>
+    <color name="minusB_color">#FF0057</color>
+    <color name="addB_color">#89FF00</color>
 </resources>

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.TextView
 import com.example.coinkeeper.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class Add_Fragment : Fragment() {
@@ -23,10 +24,14 @@ class Add_Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        //setupAddOnClickListener()
+        val buttonAddItem = view.findViewById<FloatingActionButton>(R.id.bAdd)
+        buttonAddItem?.setOnClickListener{
+            launchFragment(FinanceItemFragment.newInstanceAddItem())
+        }
 
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,6 +44,18 @@ class Add_Fragment : Fragment() {
             financeListAdapter.submitList(it)
         }
         return view
+    }
+    //private fun setupAddOnClickListener(){
+//
+    //}
+
+
+    private fun launchFragment(fragment: Fragment) {
+        parentFragmentManager.popBackStack()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .addToBackStack(null)//Добавляет фаргмент в BackStack
+            .commit()
     }
 
     private fun setupRecyclerView(view : View) {
