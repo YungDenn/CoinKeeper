@@ -16,7 +16,7 @@ import com.example.coinkeeper.presentation.FinanceListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FinanceItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var financeListAdapter: FinanceListAdapter
@@ -35,4 +35,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
     }
 
+    override fun onEditingFinished() {
+        supportFragmentManager.popBackStack()
+    }
 }

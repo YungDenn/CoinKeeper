@@ -6,5 +6,7 @@
     <string name="hint_count_add_item">Count:</string>
     <string name="hint_bSave_add_item">Save</string>
     <string name="hint_comment_add_item">Comment:</string>
+    <string name="error_input_count">Invalid number</string>
+    <string name="error_input_name">Invalid name</string>
 
 </resources>

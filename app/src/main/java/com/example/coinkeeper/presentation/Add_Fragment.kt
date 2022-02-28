@@ -12,7 +12,7 @@ import com.example.coinkeeper.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
-class Add_Fragment : Fragment() {
+class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var financeListAdapter: FinanceListAdapter
@@ -27,9 +27,13 @@ class Add_Fragment : Fragment() {
         //setupAddOnClickListener()
         val buttonAddItem = view.findViewById<FloatingActionButton>(R.id.bAdd)
         buttonAddItem?.setOnClickListener{
-            launchFragment(FinanceItemFragment.newInstanceAddItem())
+            launchFragment(FinanceItemFragment.newInstanceAddItemIncome())
         }
 
+    }
+
+    override fun onEditingFinished() {
+        parentFragmentManager.popBackStack()
     }
 
     override fun onCreateView(
