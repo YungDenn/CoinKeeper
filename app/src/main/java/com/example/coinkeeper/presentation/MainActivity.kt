@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), FinanceItemFragment.OnEditingFinishedL
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
 
-        setupActionBarWithNavController(navController)
+       // setupActionBarWithNavController(navController)
         bottomNavigationView.setupWithNavController(navController)
     }
 

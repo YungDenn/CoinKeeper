@@ -11,7 +11,12 @@ object FinanceItemListRepositoryImpl: FinanceItemRepository {
     private val financeListLD = MutableLiveData<List<FinanceItem>>()
     private val financeList = sortedSetOf<FinanceItem>({ p0, p1 -> p0.id.compareTo(p1.id) })
 
+
+    private val balanceLD = MutableLiveData<Int>()
+    private var balance: Int = 0
+
     private var autoIncrementId = 0
+    //private var balance = 0
 
     init {
         for (i in 0 until 10) {
@@ -24,9 +29,20 @@ object FinanceItemListRepositoryImpl: FinanceItemRepository {
         if (financeItem.id == FinanceItem.UNDEFINED_ID) {
             financeItem.id = autoIncrementId++
         }
+        updateBalance(financeItem.sum)
         financeList.add(financeItem)
         updateList()
     }
+
+    private fun updateBalance(sum: Int){
+        balance += sum
+        balanceLD.value = balance
+    }
+
+    override fun getFinanceBalance(): MutableLiveData<Int> {
+        return balanceLD
+    }
+
 
     override fun deleteItem(financeItem: FinanceItem) {
         financeList.remove(financeItem)
@@ -51,6 +67,7 @@ object FinanceItemListRepositoryImpl: FinanceItemRepository {
 
     private fun updateList(){
         financeListLD.value = financeList.toList()
+
     }
 
 }

@@ -1,11 +1,9 @@
 package com.example.coinkeeper.presentation
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.coinkeeper.data.FinanceItemListRepositoryImpl
-import com.example.coinkeeper.domain.DeleteFinanceItemUseCase
-import com.example.coinkeeper.domain.EditFinanceItemUseCase
-import com.example.coinkeeper.domain.FinanceItem
-import com.example.coinkeeper.domain.GetFinanceItemListUseCase
+import com.example.coinkeeper.domain.*
 
 class MainViewModel: ViewModel() {
 
@@ -13,12 +11,15 @@ class MainViewModel: ViewModel() {
 
     private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
     private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
-    private val editFinanceItemUseCase = EditFinanceItemUseCase(repository)
+    private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
+    //private val editFinanceItemUseCase = EditFinanceItemUseCase(repository)
 
     val financeList = getFinanceListUseCase.getFinanceList()
+    val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
 
     fun deleteFinanceItem(financeItem: FinanceItem){
         deleteFinanceItemUseCase.deleteItem(financeItem)
     }
+
 
 }

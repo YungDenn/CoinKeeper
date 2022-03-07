@@ -79,6 +79,7 @@ class FinanceItemFragment : Fragment() {
         viewModel.shopItem.observe(viewLifecycleOwner) {
             etName.setText(it.name)
             etCount.setText(it.sum.toString())
+            etComment.setText(it.comment)
         }
         buttonSave.setOnClickListener {
             viewModel.editFinanceItem(etName.text?.toString(), etCount.text?.toString(), etComment.text?.toString())
@@ -162,8 +163,7 @@ class FinanceItemFragment : Fragment() {
         val operation = args.getString(OPERATION_TYPE)
         if (operation == OPERATION_INCOME){
             typeOperation = 1
-        }
-        else{
+        } else{
             typeOperation = 0
         }
     }
@@ -198,6 +198,15 @@ class FinanceItemFragment : Fragment() {
                 arguments = Bundle().apply {
                     putString(SCREEN_MODE, MODE_ADD)
                     putString(OPERATION_TYPE, OPERATION_INCOME)
+                }
+            }
+        }
+
+        fun newInstanceAddItemExpense(): FinanceItemFragment {
+            return FinanceItemFragment().apply {
+                arguments = Bundle().apply {
+                    putString(SCREEN_MODE, MODE_ADD)
+                    putString(OPERATION_TYPE, OPERATION_EXPENSE)
                 }
             }
         }

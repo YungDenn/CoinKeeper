@@ -1,13 +1,11 @@
 package com.example.coinkeeper.presentation
 
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.coinkeeper.data.FinanceItemListRepositoryImpl
-import com.example.coinkeeper.domain.AddFinanceItemUseCase
-import com.example.coinkeeper.domain.EditFinanceItemUseCase
-import com.example.coinkeeper.domain.FinanceItem
-import com.example.coinkeeper.domain.GetFinanceItemUseCase
+import com.example.coinkeeper.domain.*
 import java.lang.Exception
 
 class FinanceItemViewModel: ViewModel() {
@@ -16,6 +14,7 @@ class FinanceItemViewModel: ViewModel() {
     private val getItemUseCase = GetFinanceItemUseCase(repository)
     private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
     private val editItemUseCase = EditFinanceItemUseCase(repository)
+
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -33,6 +32,9 @@ class FinanceItemViewModel: ViewModel() {
     val closeScreen: LiveData<Unit>
         get() = _closeScreen
 
+    private val _financeBalance = MutableLiveData<Int>()
+    val financeBalance: LiveData<Int>
+        get() = _financeBalance
 
     fun getFinanceItem(FinanceItemId: Int){
         val item = getItemUseCase.getItem(FinanceItemId)
@@ -56,7 +58,11 @@ class FinanceItemViewModel: ViewModel() {
             finishWork()
         }
 
+
+        _financeBalance.value = count
+
     }
+
 
     fun editFinanceItem(inputName: String?, inputCount: String?, inputComment: String?){
         val name = parseName(inputName)
