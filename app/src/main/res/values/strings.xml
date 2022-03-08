@@ -7,5 +7,7 @@
     <string name="error_input_count">Invalid number</string>
     <string name="error_input_name">Invalid name</string>
     <string name="balance">%s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

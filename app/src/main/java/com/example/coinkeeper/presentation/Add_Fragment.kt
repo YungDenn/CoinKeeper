@@ -67,7 +67,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_, container, false)
         setupRecyclerView(view)
-        return view
+            return view
     }
     private fun setupBalance(){
         val tv_Balance = requireActivity().findViewById<TextView>(R.id.tv_Balance)

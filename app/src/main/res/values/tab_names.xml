@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="tab_names_string">
+        <item>Финансовый учет</item>
+        <item>Зачем нужен</item>
+        <item>Функции</item>
+        <item>Виды</item>
+        <item>Заключение</item>
+    </string-array>
+
+</resources>
