@@ -33,6 +33,16 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModelMain = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModelMain.financeList.observe(this) {
+            financeListAdapter.submitList(it)
+        }
+    }
+
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //setupAddOnClickListener()

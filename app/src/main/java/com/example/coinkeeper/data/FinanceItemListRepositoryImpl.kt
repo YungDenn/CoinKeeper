@@ -29,13 +29,20 @@ object FinanceItemListRepositoryImpl: FinanceItemRepository {
         if (financeItem.id == FinanceItem.UNDEFINED_ID) {
             financeItem.id = autoIncrementId++
         }
-        updateBalance(financeItem.sum)
+
+        updateBalance(financeItem.sum, financeItem.category)
         financeList.add(financeItem)
         updateList()
     }
 
-    private fun updateBalance(sum: Int){
-        balance += sum
+    private fun updateBalance(sum: Int, type : Int){
+        if (type == 1){
+            balance += sum
+        }
+        else{
+            balance -= sum
+        }
+
         balanceLD.value = balance
     }
 
@@ -45,12 +52,15 @@ object FinanceItemListRepositoryImpl: FinanceItemRepository {
 
 
     override fun deleteItem(financeItem: FinanceItem) {
+        updateBalance(financeItem.sum, 0)
         financeList.remove(financeItem)
         updateList()
+        
     }
 
     override fun editItem(financeItem: FinanceItem) {
         val oldElement = getFinanceItem(financeItem.id)
+        balance -= oldElement.sum
         financeList.remove(oldElement)
         addItem(financeItem)
     }
