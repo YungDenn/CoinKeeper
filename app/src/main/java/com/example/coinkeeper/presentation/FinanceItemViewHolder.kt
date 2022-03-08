@@ -1,6 +1,7 @@
 package com.example.coinkeeper.presentation
 
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coinkeeper.R

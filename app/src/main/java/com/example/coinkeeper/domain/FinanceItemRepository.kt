@@ -1,6 +1,7 @@
 package com.example.coinkeeper.domain
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 interface FinanceItemRepository {
 
@@ -13,4 +14,7 @@ interface FinanceItemRepository {
     fun getFinanceItem(financeItemId: Int): FinanceItem
 
     fun getFinanceItemList(): LiveData<List<FinanceItem>>
+
+    fun getFinanceBalance(): MutableLiveData<Int>
+
 }
