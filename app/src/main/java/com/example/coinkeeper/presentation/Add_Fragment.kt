@@ -20,7 +20,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     private lateinit var financeListAdapter: FinanceListAdapter
 
     private lateinit var viewModelMain : MainViewModel
-        //ViewModelProvider(this).get(MainViewModel::class.java)
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
