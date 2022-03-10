@@ -14,7 +14,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class Info_Fragment : Fragment() {
 
-
     private lateinit var adapter: PagerViewAdapter
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
@@ -26,15 +25,7 @@ class Info_Fragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_info_, container, false)
         setupAdapter(view)
-
-        val tab_names = resources.getStringArray(R.array.tab_names_string)
-
-        tabLayout = view.findViewById(R.id.tab_layout)
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = tab_names[position]
-
-        }.attach()
-
+        setupTabLayout(view)
         return view
     }
 
@@ -42,6 +33,15 @@ class Info_Fragment : Fragment() {
         adapter = PagerViewAdapter(requireActivity())
         viewPager = view.findViewById(R.id.pager)
         viewPager.adapter = adapter
+    }
+
+    private fun setupTabLayout(view: View){
+        val tabNames = resources.getStringArray(R.array.tab_names)
+        tabLayout = view.findViewById(R.id.tab_layout)
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = tabNames[position]
+
+        }.attach()
     }
 
 
