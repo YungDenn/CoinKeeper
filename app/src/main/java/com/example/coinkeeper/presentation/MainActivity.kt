@@ -18,9 +18,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), FinanceItemFragment.OnEditingFinishedListener {
 
-    private lateinit var viewModel: MainViewModel
-    private lateinit var financeListAdapter: FinanceListAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,7 +28,6 @@ class MainActivity : AppCompatActivity(), FinanceItemFragment.OnEditingFinishedL
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
 
-       // setupActionBarWithNavController(navController)
         bottomNavigationView.setupWithNavController(navController)
     }
 

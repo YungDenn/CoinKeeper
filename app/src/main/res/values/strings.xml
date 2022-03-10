@@ -6,7 +6,7 @@
     <string name="hint_comment_add_item">Comment:</string>
     <string name="error_input_count">Invalid number</string>
     <string name="error_input_name">Invalid name</string>
-    <string name="balance">%s</string>
+    <string name="current_date">Date: %1$s</string>
 
 
 </resources>

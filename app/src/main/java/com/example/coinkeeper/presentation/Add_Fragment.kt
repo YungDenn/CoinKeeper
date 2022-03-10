@@ -18,7 +18,6 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
 
     private lateinit var financeListAdapter: FinanceListAdapter
-    private lateinit var balance: MutableLiveData<Int>
 
     private lateinit var viewModelMain : MainViewModel
         //ViewModelProvider(this).get(MainViewModel::class.java)
@@ -45,7 +44,6 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //setupAddOnClickListener()
         val buttonIncomeItem = view.findViewById<FloatingActionButton>(R.id.bAdd)
         val buttonExpenseItem = view.findViewById<FloatingActionButton>(R.id.bMinus)
         buttonIncomeItem?.setOnClickListener{

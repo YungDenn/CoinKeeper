@@ -1,5 +1,8 @@
 package com.example.coinkeeper.presentation
 
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -8,19 +11,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
+import android.widget.*
 import androidx.lifecycle.ViewModelProvider
 import com.example.coinkeeper.R
 import com.example.coinkeeper.domain.FinanceItem
 import com.google.android.material.textfield.TextInputLayout
 import java.lang.RuntimeException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
-class FinanceItemFragment : Fragment() {
+class FinanceItemFragment :
+    Fragment(),
+    DatePickerDialog.OnDateSetListener,
+    TimePickerDialog.OnTimeSetListener {
 
 
     private lateinit var viewModel: FinanceItemViewModel
-
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     private lateinit var tilName: TextInputLayout
@@ -29,10 +37,24 @@ class FinanceItemFragment : Fragment() {
     private lateinit var etCount: EditText
     private lateinit var etComment: EditText
     private lateinit var buttonSave: Button
+    private lateinit var etDate: TextView
 
     private var screenMode: String = MODE_UNKNOWN
     private var financeItemId: Int = FinanceItem.UNDEFINED_ID
     private var typeOperation: Int = 0
+
+    private var day: Int = 0
+    private var month: Int = 0
+    private var year: Int = 0
+    private var hour: Int = 0
+    private var minute: Int = 0
+
+    private var savedDay: Int = 0
+    private var savedMonth: Int = 0
+    private var savedYear: Int = 0
+    private var savedHour: Int = 0
+    private var savedMinute: Int = 0
+
 
 
     override fun onAttach(context: Context) {
@@ -65,6 +87,8 @@ class FinanceItemFragment : Fragment() {
         viewModel = ViewModelProvider(this)[FinanceItemViewModel::class.java]
         launchRightMode()
         observeViewModel()
+        pickDate()
+        setThisMoment()
     }
 
     private fun launchRightMode() {
@@ -169,6 +193,49 @@ class FinanceItemFragment : Fragment() {
     }
 
 
+
+    private fun getDateTimeCalendar(){
+        val calendar = Calendar.getInstance()
+        day = calendar.get(Calendar.DAY_OF_MONTH)
+        month = calendar.get(Calendar.MONTH)
+        year = calendar.get(Calendar.YEAR)
+        hour = calendar.get(Calendar.HOUR_OF_DAY)
+        minute = calendar.get(Calendar.MINUTE)
+    }
+
+    private fun pickDate(){
+        etDate.setOnClickListener{
+            getDateTimeCalendar()
+            DatePickerDialog(requireContext(),this, year, month, day).show()
+        }
+    }
+
+    override fun onDateSet(p0: DatePicker?, year: Int, month: Int, dayOfMounth: Int) {
+        savedDay = dayOfMounth
+        savedMonth = month + 1
+        savedYear = year
+
+        getDateTimeCalendar()
+        TimePickerDialog(requireContext(), this, hour, minute, true).show()
+    }
+
+    override fun onTimeSet(p0: TimePicker?, hourOfDay: Int, minute: Int) {
+        savedHour = hourOfDay
+        savedMinute = minute
+        val dateText = "$savedDay/$savedMonth $savedHour:$savedMinute"
+        val selectedDate = getString(R.string.current_date, dateText)
+        etDate.setText(selectedDate)
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun setThisMoment(){
+        val sdf = SimpleDateFormat("dd/MM kk:mm" )
+        val currentDate = sdf.format(Date())
+        val dateToET = getString(R.string.current_date, currentDate.toString())
+        etDate.setText(dateToET)
+    }
+
+
     private fun initViews(view : View) {
         tilName = view.findViewById(R.id.til_name)
         tilCount = view.findViewById(R.id.til_count)
@@ -176,6 +243,7 @@ class FinanceItemFragment : Fragment() {
         etCount = view.findViewById(R.id.et_count)
         etComment = view.findViewById(R.id.et_comment)
         buttonSave = view.findViewById(R.id.save_button)
+        etDate = view.findViewById(R.id.etDate)
 
     }
 
