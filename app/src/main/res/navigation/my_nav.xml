@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_info_" />
     <fragment
         android:id="@+id/statistics_Fragment"
-        android:name="com.example.coinkeeper.presentation.statistics_Fragment"
+        android:name="com.example.coinkeeper.presentation.Statistics_Fragment"
         android:label="fragment_statistics_"
         tools:layout="@layout/fragment_statistics_" />
 </navigation>

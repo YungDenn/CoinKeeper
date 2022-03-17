@@ -5,25 +5,27 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import com.anychart.AnyChart
 import com.anychart.AnyChartView
 import com.anychart.chart.common.dataentry.DataEntry
 import com.anychart.chart.common.dataentry.ValueDataEntry
 import com.anychart.charts.Pie
 import com.example.coinkeeper.R
+import com.example.coinkeeper.domain.FinanceItem
 
 
-class statistics_Fragment : Fragment() {
+class Statistics_Fragment : Fragment() {
+
+    private lateinit var viewModelMain : MainViewModel
 
     private var chart: AnyChartView? = null
 
-    private val salary = listOf(200,300,400,600)
-    private val month = listOf("January","February","March","April")
+    private val month = listOf("Получение зарплаты","Пополнение карты","Поступление дивидендов","Начисление кешбека")
+    private val salary = listOf(80000,30000,5000,500)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,15 +40,28 @@ class statistics_Fragment : Fragment() {
     }
 
     private fun configChartView() {
+
+        val numbers2: MutableList<String> = mutableListOf()
+
+        viewModelMain = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModelMain.financeList.observe(this) {
+            var i = 0
+            while (i < it.size) {
+                numbers2.add(it.elementAt(i).name)
+                i++
+            }
+        }
+
+
         val pie : Pie = AnyChart.pie()
 
         val dataPieChart: MutableList<DataEntry> = mutableListOf()
 
         for (index in salary.indices){
-            dataPieChart.add(ValueDataEntry(month.elementAt(index),salary.elementAt(index)))
+            dataPieChart.add(ValueDataEntry(month.elementAt(index), salary.elementAt(index)))
         }
         pie.data(dataPieChart)
-        pie.title("Salaries Overview")
+        pie.title("Поступление денежных средств")
         chart!!.setChart(pie)
     }
 
