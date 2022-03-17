@@ -23,7 +23,7 @@ class Statistics_Fragment : Fragment() {
     private var chart: AnyChartView? = null
 
     private val month = listOf("Получение зарплаты","Пополнение карты","Поступление дивидендов","Начисление кешбека")
-    private val salary = listOf(80000,30000,5000,500)
+    private val salary = listOf(80000,30000,5000,15000)
 
 
 

@@ -146,11 +146,11 @@
 
 
     <integer-array name="icons">
-        <item name="was2" type="drawable">@drawable/thinking_emoji</item>
-        <item name="was1" type="drawable">@drawable/ic_baseline_stat_24</item>
-        <item name="was3" type="drawable">@drawable/ic_launcher_background</item>
-        <item name="was6" type="drawable">@drawable/thinking_emoji</item>
-        <item name="was4" type="drawable">@drawable/thinking_emoji</item>
+        <item name="was2" type="drawable">@drawable/finance</item>
+        <item name="was1" type="drawable">@drawable/book</item>
+        <item name="was3" type="drawable">@drawable/recomendation</item>
+        <item name="was6" type="drawable">@drawable/end</item>
+        <item name="was4" type="drawable">@drawable/program</item>
 
     </integer-array>
 
