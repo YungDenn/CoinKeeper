@@ -8,6 +8,8 @@ import androidx.room.RoomDatabase
 @Database(entities = [FinanceItemDbModel::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
 
+    abstract fun financeListDao(): FinanceListDao
+
     companion object{
 
         private var INSTANCE: AppDatabase? = null
