@@ -2,6 +2,7 @@ package com.example.coinkeeper.presentation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Html
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -36,8 +37,8 @@ class PagerFragment : Fragment() {
 
         arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
             val position = getInt(ARG_OBJECT)
-            tvTitle.text = arrayTitle[position-1]
-            tvContent.text = arrayContent[position-1]
+            tvTitle.text = Html.fromHtml(arrayTitle[position-1])
+            tvContent.text = Html.fromHtml(arrayContent[position-1])
             ivIcon.setImageResource(arrayIco.getResourceId(position-1,0))
         }
     }

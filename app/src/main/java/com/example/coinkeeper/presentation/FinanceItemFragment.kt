@@ -1,5 +1,8 @@
 package com.example.coinkeeper.presentation
 
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -8,31 +11,48 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
+import android.widget.*
 import androidx.lifecycle.ViewModelProvider
 import com.example.coinkeeper.R
+import com.example.coinkeeper.databinding.FragmentAddBinding
+import com.example.coinkeeper.databinding.FragmentFinanceItemBinding
 import com.example.coinkeeper.domain.FinanceItem
 import com.google.android.material.textfield.TextInputLayout
 import java.lang.RuntimeException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
-class FinanceItemFragment : Fragment() {
-
+class FinanceItemFragment :
+    Fragment(),
+    DatePickerDialog.OnDateSetListener,
+    TimePickerDialog.OnTimeSetListener {
 
     private lateinit var viewModel: FinanceItemViewModel
-
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
-    private lateinit var tilName: TextInputLayout
-    private lateinit var tilCount: TextInputLayout
-    private lateinit var etName: EditText
-    private lateinit var etCount: EditText
-    private lateinit var etComment: EditText
-    private lateinit var buttonSave: Button
+    private var _binding: FragmentFinanceItemBinding? = null
+    private val binding: FragmentFinanceItemBinding
+        get() = _binding ?: throw RuntimeException("FragmentFinanceItemBinding == null")
+
 
     private var screenMode: String = MODE_UNKNOWN
     private var financeItemId: Int = FinanceItem.UNDEFINED_ID
     private var typeOperation: Int = 0
+
+    private var day: Int = 0
+    private var month: Int = 0
+    private var year: Int = 0
+    private var hour: Int = 0
+    private var minute: Int = 0
+
+    private var savedDay: Int = 0
+    private var savedMonth: Int = 0
+    private var savedYear: Int = 0
+    private var savedHour: Int = 0
+    private var savedMinute: Int = 0
+
 
 
     override fun onAttach(context: Context) {
@@ -53,18 +73,21 @@ class FinanceItemFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return layoutInflater.inflate(R.layout.fragment_finance_item, container, false)
+    ): View {
+        _binding = FragmentFinanceItemBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews(view)
         addTextChangeListener()
         viewModel = ViewModelProvider(this)[FinanceItemViewModel::class.java]
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         launchRightMode()
         observeViewModel()
+        pickDate()
+        setThisMoment()
     }
 
     private fun launchRightMode() {
@@ -76,22 +99,26 @@ class FinanceItemFragment : Fragment() {
 
     private fun launchEditMode() {
         viewModel.getFinanceItem(financeItemId)
-        viewModel.shopItem.observe(viewLifecycleOwner) {
-            etName.setText(it.name)
-            etCount.setText(it.sum.toString())
-            etComment.setText(it.comment)
+        viewModel.financeItem.observe(viewLifecycleOwner) {
+            binding.etName.setText(it.name)
+            binding.etCount.setText(it.sum.toString())
+            binding.etComment.setText(it.comment)
         }
-        buttonSave.setOnClickListener {
-            viewModel.editFinanceItem(etName.text?.toString(), etCount.text?.toString(), etComment.text?.toString())
+        binding.saveButton.setOnClickListener {
+            viewModel.editFinanceItem(
+                binding.etName.text?.toString(),
+                binding.etCount.text?.toString(),
+                binding.etComment.text?.toString()
+            )
         }
     }
 
     private fun launchAddMode() {
-        buttonSave.setOnClickListener {
+        binding.saveButton.setOnClickListener {
             viewModel.addFinanceItem(
-                etName.text?.toString(),
-                etCount.text?.toString(),
-                etComment.text?.toString(),
+                binding.etName.text?.toString(),
+                binding.etCount.text?.toString(),
+                binding.etComment.text?.toString(),
                 typeOperation.toString()
             )
         }
@@ -99,7 +126,7 @@ class FinanceItemFragment : Fragment() {
 
 
     private fun addTextChangeListener() {
-        etName.addTextChangedListener(object : TextWatcher {
+        binding.etName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -109,7 +136,7 @@ class FinanceItemFragment : Fragment() {
             override fun afterTextChanged(p0: Editable?) {}
         })
 
-        etCount.addTextChangedListener(object : TextWatcher {
+        binding.etCount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -121,23 +148,6 @@ class FinanceItemFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.errorInputCount.observe(viewLifecycleOwner) {
-            val message = if (it) {
-                getString(R.string.error_input_count)
-            } else {
-                null
-            }
-            tilCount.error = message
-        }
-
-        viewModel.errorInputName.observe(viewLifecycleOwner) {
-            val message = if (it) {
-                getString(R.string.error_input_name)
-            } else {
-                null
-            }
-            tilName.error = message
-        }
         viewModel.closeScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener.onEditingFinished()
         }
@@ -156,7 +166,7 @@ class FinanceItemFragment : Fragment() {
         screenMode = mode
         if (screenMode == MODE_EDIT) {
             if (!args.containsKey(FINANCE_ITEM_ID)) {
-                throw RuntimeException("Param shop item id is absent")
+                throw RuntimeException("Param financeitem id is absent")
             }
             financeItemId = args.getInt(FINANCE_ITEM_ID, FinanceItem.UNDEFINED_ID)
         }
@@ -169,14 +179,46 @@ class FinanceItemFragment : Fragment() {
     }
 
 
-    private fun initViews(view : View) {
-        tilName = view.findViewById(R.id.til_name)
-        tilCount = view.findViewById(R.id.til_count)
-        etName = view.findViewById(R.id.et_name)
-        etCount = view.findViewById(R.id.et_count)
-        etComment = view.findViewById(R.id.et_comment)
-        buttonSave = view.findViewById(R.id.save_button)
 
+    private fun getDateTimeCalendar(){
+        val calendar = Calendar.getInstance()
+        day = calendar.get(Calendar.DAY_OF_MONTH)
+        month = calendar.get(Calendar.MONTH)
+        year = calendar.get(Calendar.YEAR)
+        hour = calendar.get(Calendar.HOUR_OF_DAY)
+        minute = calendar.get(Calendar.MINUTE)
+    }
+
+    private fun pickDate(){
+        binding.etDate.setOnClickListener{
+            getDateTimeCalendar()
+            DatePickerDialog(requireContext(),this, year, month, day).show()
+        }
+    }
+
+    override fun onDateSet(p0: DatePicker?, year: Int, month: Int, dayOfMounth: Int) {
+        savedDay = dayOfMounth
+        savedMonth = month + 1
+        savedYear = year
+
+        getDateTimeCalendar()
+        TimePickerDialog(requireContext(), this, hour, minute, true).show()
+    }
+
+    override fun onTimeSet(p0: TimePicker?, hourOfDay: Int, minute: Int) {
+        savedHour = hourOfDay
+        savedMinute = minute
+        val dateText = "$savedDay/$savedMonth $savedHour:$savedMinute"
+        val selectedDate = getString(R.string.current_date, dateText)
+        binding.etDate.setText(selectedDate)
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun setThisMoment(){
+        val sdf = SimpleDateFormat("dd/MM kk:mm" )
+        val currentDate = sdf.format(Date())
+        val dateToET = getString(R.string.current_date, currentDate.toString())
+        binding.etDate.setText(dateToET)
     }
 
     interface OnEditingFinishedListener{
@@ -212,7 +254,6 @@ class FinanceItemFragment : Fragment() {
         }
 
         fun newInstanceEditItem(financeItemId: Int): FinanceItemFragment {
-            //return ShopItemFragment(MODE_EDIT, shopItemId)
             return FinanceItemFragment().apply {
                 arguments = Bundle().apply {
                     putString(SCREEN_MODE, MODE_EDIT)

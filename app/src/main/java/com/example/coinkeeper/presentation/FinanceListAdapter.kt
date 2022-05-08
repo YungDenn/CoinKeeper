@@ -2,9 +2,13 @@ package com.example.coinkeeper.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import com.example.coinkeeper.R
 import com.example.coinkeeper.domain.FinanceItem
 import androidx.recyclerview.widget.ListAdapter
+import com.example.coinkeeper.databinding.FinanceItemExpenceBinding
+import com.example.coinkeeper.databinding.FinanceItemIncomeBinding
 
 
 class FinanceListAdapter :
@@ -19,18 +23,29 @@ class FinanceListAdapter :
             VIEW_TYPE_EXPENSE -> R.layout.finance_item_expence
             else -> throw RuntimeException("Unknown view type: $viewType")
         }
-        val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return FinanceItemViewHolder(view)
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
+            layout,
+            parent,
+            false
+        )
+        return FinanceItemViewHolder(binding)
     }
-
 
     override fun onBindViewHolder(viewHolder: FinanceItemViewHolder, position: Int) {
         val financeItem = getItem(position)
-        viewHolder.view.setOnClickListener {
+        val binding = viewHolder.binding
+        binding.root.setOnClickListener {
             onFinanceItemClickListener?.invoke(financeItem)
         }
-        viewHolder.tvName.text = financeItem.name
-        viewHolder.tvSum.text = financeItem.sum.toString()
+        when(binding){
+            is FinanceItemExpenceBinding -> {
+                binding.financeItem = financeItem
+            }
+            is FinanceItemIncomeBinding ->{
+                binding.financeItem = financeItem
+            }
+        }
     }
 
 

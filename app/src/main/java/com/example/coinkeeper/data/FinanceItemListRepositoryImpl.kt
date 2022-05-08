@@ -6,14 +6,16 @@ import com.example.coinkeeper.domain.FinanceItem
 import com.example.coinkeeper.domain.FinanceItemRepository
 import java.lang.RuntimeException
 
+
 object FinanceItemListRepositoryImpl: FinanceItemRepository {
 
     private val financeListLD = MutableLiveData<List<FinanceItem>>()
-    private val financeList = sortedSetOf<FinanceItem>({ p0, p1 -> p0.id.compareTo(p1.id) })
+    private val financeList = sortedSetOf<FinanceItem>({ p1, p0 -> p0.sum.compareTo(p1.sum) })
 
 
     private val balanceLD = MutableLiveData<Int>()
     private var balance: Int = 0
+
 
     private var autoIncrementId = 0
     //private var balance = 0
