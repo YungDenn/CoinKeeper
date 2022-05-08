@@ -25,7 +25,7 @@ class FinanceItemViewModel: ViewModel() {
         get() = _errorInputCount
 
     private val _financeItem = MutableLiveData<FinanceItem>()
-    val shopItem: LiveData<FinanceItem>
+    val financeItem: LiveData<FinanceItem>
         get() = _financeItem
 
     private val _closeScreen = MutableLiveData<Unit>()
@@ -57,10 +57,7 @@ class FinanceItemViewModel: ViewModel() {
             addFinanceItemUseCase.addItem(financeItem)
             finishWork()
         }
-
-
         _financeBalance.value = count
-
     }
 
 

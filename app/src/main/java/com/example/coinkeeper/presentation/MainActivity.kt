@@ -12,20 +12,26 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coinkeeper.R
+import com.example.coinkeeper.databinding.ActivityMainBinding
 import com.example.coinkeeper.presentation.FinanceListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity(), FinanceItemFragment.OnEditingFinishedListener {
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setupBottomNavigationView()
     }
     private fun setupBottomNavigationView(){
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        val bottomNavigationView = binding.bottomNavigationView
+        val navHostFragment = supportFragmentManager.findFragmentById(
+            R.id.fragmentContainer
+        ) as NavHostFragment
         val navController = navHostFragment.navController
 
         bottomNavigationView.setupWithNavController(navController)
