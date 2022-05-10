@@ -42,12 +42,12 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:text="@{viewModel.balanceLD.toString()}"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/tvLabel"
             app:layout_constraintTop_toTopOf="parent"
+            app:numberAsText="@{viewModel.balanceLD}"
             tools:text="100" />
 
         <androidx.recyclerview.widget.RecyclerView

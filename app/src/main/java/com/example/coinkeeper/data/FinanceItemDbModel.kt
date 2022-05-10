@@ -11,5 +11,5 @@ data class FinanceItemDbModel(
     val name: String,
     val comment: String,
     val sum: Int,
-    val category: Int
+    val typeOperation: Int
 )

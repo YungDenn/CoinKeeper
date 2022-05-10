@@ -9,7 +9,7 @@ class FinanceListMapper {
         name = financeItem.name,
         sum = financeItem.sum,
         comment = financeItem.comment,
-        category = financeItem.category
+        typeOperation = financeItem.typeOperation
     )
 
     fun mapDbModelToEntity(financeItemDbModel: FinanceItemDbModel) = FinanceItem(
@@ -17,7 +17,7 @@ class FinanceListMapper {
         name = financeItemDbModel.name,
         sum = financeItemDbModel.sum,
         comment = financeItemDbModel.comment,
-        category = financeItemDbModel.category
+        typeOperation = financeItemDbModel.typeOperation
     )
 
     fun mapListDbModelToListEntity(list: List<FinanceItemDbModel>) = list.map {

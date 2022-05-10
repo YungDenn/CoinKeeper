@@ -13,11 +13,11 @@ interface FinanceListDao {
     fun getFinanceList(): LiveData<List<FinanceItemDbModel>>
 
     @Insert (onConflict =  OnConflictStrategy.REPLACE)
-    fun addFinanceList(financeItemDbModel: FinanceItemDbModel)
+    suspend fun addFinanceItem(financeItemDbModel: FinanceItemDbModel)
 
     @Query("DELETE FROM finance_items WHERE id =:financeItemId")
-    fun deleteFinanceItem(financeItemId: Int)
+    suspend fun deleteFinanceItem(financeItemId: Int)
 
     @Query("SELECT * FROM finance_items WHERE id=:financeItemId LIMIT 1")
-    fun getFinanceItem(financeItemId: Int): FinanceItemDbModel
+    suspend fun getFinanceItem(financeItemId: Int): FinanceItemDbModel
 }

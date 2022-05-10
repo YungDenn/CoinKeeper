@@ -4,10 +4,10 @@ data class FinanceItem(
     val name: String,
     val comment: String,
     val sum: Int,
-    val category: Int,
-    var id:Int = UNDEFINED_ID
+    val typeOperation: Int,
+    var id:Int = ID
 ) {
     companion object{
-        const val UNDEFINED_ID = -1
+        const val ID = 0
     }
 }

@@ -38,7 +38,7 @@ class FinanceItemFragment :
 
 
     private var screenMode: String = MODE_UNKNOWN
-    private var financeItemId: Int = FinanceItem.UNDEFINED_ID
+    private var financeItemId: Int = FinanceItem.ID
     private var typeOperation: Int = 0
 
     private var day: Int = 0
@@ -168,7 +168,7 @@ class FinanceItemFragment :
             if (!args.containsKey(FINANCE_ITEM_ID)) {
                 throw RuntimeException("Param financeitem id is absent")
             }
-            financeItemId = args.getInt(FINANCE_ITEM_ID, FinanceItem.UNDEFINED_ID)
+            financeItemId = args.getInt(FINANCE_ITEM_ID, FinanceItem.ID)
         }
         val operation = args.getString(OPERATION_TYPE)
         if (operation == OPERATION_INCOME){

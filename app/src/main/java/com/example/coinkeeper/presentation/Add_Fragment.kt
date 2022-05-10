@@ -49,7 +49,6 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         viewModelMain = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModelMain.financeList.observe(this) {
             financeListAdapter.submitList(it)
-
         }
     }
 
