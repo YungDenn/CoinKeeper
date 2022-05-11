@@ -23,11 +23,17 @@ class MainViewModel(application: Application): AndroidViewModel(application){
     private val scope = CoroutineScope(Dispatchers.Main)
 
     val financeList = getFinanceListUseCase.getFinanceList()
-    val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+    //val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+    lateinit var balanceLD: MutableLiveData<Int>
 
     fun deleteFinanceItem(financeItem: FinanceItem){
         viewModelScope.launch {
             deleteFinanceItemUseCase.deleteItem(financeItem)
+        }
+    }
+    fun getFinanceBalance(){
+        viewModelScope.launch {
+            balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
         }
     }
 

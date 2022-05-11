@@ -38,6 +38,11 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     val closeScreen: LiveData<Unit>
         get() = _closeScreen
 
+    private val _financeBalance = MutableLiveData<Int>()
+    val financeBalance: LiveData<Int>
+        get() = _financeBalance
+
+
 
     fun getFinanceItem(FinanceItemId: Int){
         viewModelScope.launch {
@@ -50,22 +55,27 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         inputName: String?,
         inputCount: String?,
         inputComment: String?,
-        inputtypeOperation: String?) {
+        inputTypeOperation: String?,
+        inputDate: String?,
+        inputCategoryId: String?,
+        ) {
 
         val name = parseName(inputName)
-        val count = parseCount(inputCount)
+        val sum = parseCount(inputCount)
         val comment = parseComment(inputComment)
-        val typeOperation = parseCategory(inputtypeOperation)
-        val fieldsIsValid = validateInput(name, count)
+        val typeOperation = parseTypeOperation(inputTypeOperation)
+        val date = parseDate(inputDate)
+        val categoryId = parseIdCategory(inputCategoryId)
+        val fieldsIsValid = validateInput(name, sum)
         if (fieldsIsValid){
             viewModelScope.launch {
-                val financeItem = FinanceItem(name, comment, count, typeOperation)
+                val financeItem = FinanceItem(0, name,  comment, sum,  typeOperation, date, categoryId )
                 addFinanceItemUseCase.addItem(financeItem)
                 finishWork()
             }
 
         }
-        //_financeBalance.value = count
+        _financeBalance.value =+ sum
     }
 
 
@@ -86,6 +96,10 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         }
     }
 
+    private fun updateBalance(){
+
+    }
+
     private fun parseName(inputName: String?): String{
         return inputName?.trim() ?: ""
         // Если inputName не равен null, тогда обрезать пробелы (.trim())
@@ -102,9 +116,19 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
             0
         }
     }
-    private fun parseCategory(inputCategory: String?) : Int {
+    private fun parseTypeOperation(inputType: String?) : Int {
         return try {
-            inputCategory?.trim()?.toInt() ?: 0
+            inputType?.trim()?.toInt() ?: 0
+        } catch (e: Exception) {
+            0
+        }
+    }
+    private fun parseDate(inputDate: String?) : String {
+        return inputDate?.trim() ?: ""
+    }
+    private fun parseIdCategory(inputCategoryId: String?) : Int {
+        return try {
+            inputCategoryId?.trim()?.toInt() ?: 0
         } catch (e: Exception) {
             0
         }

@@ -119,7 +119,9 @@ class FinanceItemFragment :
                 binding.etName.text?.toString(),
                 binding.etCount.text?.toString(),
                 binding.etComment.text?.toString(),
-                typeOperation.toString()
+                typeOperation.toString(),
+                binding.etDate.toString(),
+                "1"
             )
         }
     }
@@ -166,7 +168,7 @@ class FinanceItemFragment :
         screenMode = mode
         if (screenMode == MODE_EDIT) {
             if (!args.containsKey(FINANCE_ITEM_ID)) {
-                throw RuntimeException("Param financeitem id is absent")
+                throw RuntimeException("Param financeItem id is absent")
             }
             financeItemId = args.getInt(FINANCE_ITEM_ID, FinanceItem.ID)
         }

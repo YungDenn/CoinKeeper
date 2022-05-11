@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FragmentAddBinding
+import com.example.coinkeeper.domain.FinanceItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.lang.RuntimeException
 
@@ -24,7 +25,8 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
     private var _binding: FragmentAddBinding? = null
     private val binding: FragmentAddBinding
-        get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
+        get() = _binding ?: throw RuntimeException("FragmentAddBinding == null")
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +68,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
             buttonExpenseItem.setOnClickListener {
                 launchFragment(FinanceItemFragment.newInstanceAddItemExpense())
             }
+            setupBalance()
 
         }
     }
@@ -75,10 +78,11 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     }
 
     private fun setupBalance() {
-        val tvBalance = binding.tvBalance
-        viewModelMain.balanceLD.observe(this) {
-            tvBalance.setText(it.toString())
-        }
+//        val tvBalance = binding.tvBalance
+//        viewModelMain.balanceLD.observe(this) {
+//            tvBalance.setText(it.toString())
+//        }
+        binding.tvBalance.text = viewModelMain.getFinanceBalance().toString()
     }
 
     private fun launchFragment(fragment: Fragment) {
