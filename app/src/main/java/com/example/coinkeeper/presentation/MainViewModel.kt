@@ -14,27 +14,41 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application): AndroidViewModel(application){
 
-    private val repository = FinanceItemListRepositoryImpl(application)
+//    private val repository = FinanceItemListRepositoryImpl(application)
+//
+//    private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
+//    private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
+//    private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
+//
+//    private val scope = CoroutineScope(Dispatchers.Main)
+//
+//    val financeList = getFinanceListUseCase.getFinanceList()
+//    //val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+//    val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+//
+//    fun deleteFinanceItem(financeItem: FinanceItem){
+//        //viewModelScope.launch {
+//            deleteFinanceItemUseCase.deleteItem(financeItem)
+//        //}
+//    }
+//    //fun getFinanceBalance(){
+//        //viewModelScope.launch {
+//            //balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+//        //}
+//    //}
+    private val repository = FinanceItemListRepositoryImpl
 
     private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
     private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
     private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
-
-    private val scope = CoroutineScope(Dispatchers.Main)
+    //private val editFinanceItemUseCase = EditFinanceItemUseCase(repository)
 
     val financeList = getFinanceListUseCase.getFinanceList()
-    //val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
-    lateinit var balanceLD: MutableLiveData<Int>
+    val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
 
     fun deleteFinanceItem(financeItem: FinanceItem){
-        viewModelScope.launch {
-            deleteFinanceItemUseCase.deleteItem(financeItem)
-        }
+        deleteFinanceItemUseCase.deleteItem(financeItem)
     }
-    fun getFinanceBalance(){
-        viewModelScope.launch {
-            balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
-        }
-    }
+
 
 }

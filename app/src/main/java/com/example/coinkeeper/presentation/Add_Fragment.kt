@@ -19,14 +19,14 @@ import java.lang.RuntimeException
 
 class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
+
     private lateinit var financeListAdapter: FinanceListAdapter
 
     private lateinit var viewModelMain: MainViewModel
 
     private var _binding: FragmentAddBinding? = null
     private val binding: FragmentAddBinding
-        get() = _binding ?: throw RuntimeException("FragmentAddBinding == null")
-
+        get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +51,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         viewModelMain = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModelMain.financeList.observe(this) {
             financeListAdapter.submitList(it)
+
         }
     }
 
@@ -68,7 +69,6 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
             buttonExpenseItem.setOnClickListener {
                 launchFragment(FinanceItemFragment.newInstanceAddItemExpense())
             }
-            setupBalance()
 
         }
     }
@@ -78,11 +78,10 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     }
 
     private fun setupBalance() {
-//        val tvBalance = binding.tvBalance
-//        viewModelMain.balanceLD.observe(this) {
-//            tvBalance.setText(it.toString())
-//        }
-        binding.tvBalance.text = viewModelMain.getFinanceBalance().toString()
+        val tvBalance = binding.tvBalance
+        viewModelMain.balanceLD.observe(this) {
+            tvBalance.setText(it.toString())
+        }
     }
 
     private fun launchFragment(fragment: Fragment) {

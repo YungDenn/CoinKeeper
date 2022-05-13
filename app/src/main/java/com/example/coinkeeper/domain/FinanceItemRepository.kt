@@ -5,16 +5,22 @@ import androidx.lifecycle.MutableLiveData
 
 interface FinanceItemRepository {
 
-    suspend fun addItem(financeItem: FinanceItem)
+    fun addItem(financeItem: FinanceItem)
 
-    suspend fun deleteItem(financeItem: FinanceItem)
+    fun deleteItem(financeItem: FinanceItem)//suspend
 
-    suspend fun editItem(financeItem: FinanceItem)
+    fun editItem(financeItem: FinanceItem)//suspend
 
-    suspend fun getFinanceItem(financeItemId: Int): FinanceItem
+    fun getFinanceItem(financeItemId: Int): FinanceItem//suspend
 
     fun getFinanceItemList(): LiveData<List<FinanceItem>>
 
     fun getFinanceBalance(): MutableLiveData<Int>
+
+    fun addTypeCategory(categoryOperation: CategoryOperation)
+
+    fun getCategoryOperationsList(): LiveData<List<CategoryOperation>>
+
+    fun getCategoryOperation(categoryOperationId: Int): CategoryOperation
 
 }

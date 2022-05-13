@@ -7,6 +7,6 @@ data class CategoryOperation(
     val typeOperation: Int
 ){
     companion object{
-        const val ID_Operation = 0
+        const val ID_Operation = -1
     }
 }

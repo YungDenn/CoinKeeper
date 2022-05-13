@@ -1,7 +1,7 @@
 package com.example.coinkeeper.domain
 
 class GetFinanceItemUseCase(private val financeItemRepository: FinanceItemRepository) {
-    suspend fun getItem(financeItemId: Int): FinanceItem{
+    fun getItem(financeItemId: Int): FinanceItem{//Suspend
         return financeItemRepository.getFinanceItem(financeItemId)
     }
 }

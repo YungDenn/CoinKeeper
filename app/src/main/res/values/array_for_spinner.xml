@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinner_items">
+        <item>Отношение трат к доходам</item>
+        <item>Доходы по категориям</item>
+        <item>Доходы по категориям</item>
+    </string-array>
+
+    <string-array name="spinner_type_chart">
+        <item>Круговая диаграмма</item>
+        <item>Гистограмма</item>
+    </string-array>
+</resources>

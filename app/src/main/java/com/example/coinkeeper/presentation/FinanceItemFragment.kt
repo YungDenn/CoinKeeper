@@ -14,15 +14,13 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.lifecycle.ViewModelProvider
 import com.example.coinkeeper.R
-import com.example.coinkeeper.databinding.FragmentAddBinding
 import com.example.coinkeeper.databinding.FragmentFinanceItemBinding
 import com.example.coinkeeper.domain.FinanceItem
-import com.google.android.material.textfield.TextInputLayout
 import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.hours
+import com.example.coinkeeper.domain.CategoryOperation
+
 
 class FinanceItemFragment :
     Fragment(),
@@ -32,10 +30,15 @@ class FinanceItemFragment :
     private lateinit var viewModel: FinanceItemViewModel
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
+
     private var _binding: FragmentFinanceItemBinding? = null
     private val binding: FragmentFinanceItemBinding
         get() = _binding ?: throw RuntimeException("FragmentFinanceItemBinding == null")
 
+
+    private lateinit var spinnerCountry:Spinner
+    private lateinit var itemName:TextView
+    private var mPosition = 0
 
     private var screenMode: String = MODE_UNKNOWN
     private var financeItemId: Int = FinanceItem.ID
@@ -54,7 +57,6 @@ class FinanceItemFragment :
     private var savedMinute: Int = 0
 
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
@@ -64,19 +66,77 @@ class FinanceItemFragment :
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        parseParams()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFinanceItemBinding.inflate(inflater, container, false)
+        parseParams()
+        val spinner = binding.spinner
+        val categoryOperationList: List<CategoryOperation>
+//        viewModel = ViewModelProvider(this)[FinanceItemViewModel::class.java]
+//        viewModel.categoryOperations.observe(requireActivity()){
+//            if (typeOperation == 0){
+//                categoryOperationList = it.toList()
+//                initSpinner(spinner, it)
+//            }
+//            else{
+//                categoryOperationList = it.toList()
+//                initSpinner(spinner, it)
+//            }
+//
+//        }
+        if (typeOperation == 1){
+            categoryOperationList = dataProviderAdd()
+            initSpinner(spinner, categoryOperationList)
+        }
+        else{
+            categoryOperationList = dataProviderExpense()
+            initSpinner(spinner, categoryOperationList)
+        }
         return binding.root
     }
+
+    private fun initSpinner(spinner: Spinner, categoryOperationList: List<CategoryOperation>) {
+
+        val spinnerAdapter = SpinnerAdapter(requireContext(), categoryOperationList)
+        spinner.adapter = spinnerAdapter
+
+        spinner.onItemSelectedListener =
+            (object : AdapterView.OnItemSelectedListener {
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    mPosition = position
+                    //Toast.makeText(requireContext(),"Item Selected: ${categoryOperationList[position].name}", Toast.LENGTH_SHORT ).show()
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+            })
+    }
+    private fun dataProviderAdd():ArrayList<CategoryOperation>{
+        val mList:ArrayList<CategoryOperation> = ArrayList()
+        mList.add(CategoryOperation(1,"Зарплата", R.drawable.zp,1))
+        mList.add(CategoryOperation(2,"Дивиденды", R.drawable.zp,1))
+        mList.add(CategoryOperation(2,"Стипендия", R.drawable.zp,1))
+        return mList
+
+    }
+    private fun dataProviderExpense():ArrayList<CategoryOperation>{
+        val mList:ArrayList<CategoryOperation> = ArrayList()
+        mList.add(CategoryOperation(1,"Магазины", R.drawable.store,2))
+        mList.add(CategoryOperation(2,"Образование", R.drawable.store,2))
+        mList.add(CategoryOperation(2,"Медицина", R.drawable.store,2))
+        return mList
+
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -103,7 +163,9 @@ class FinanceItemFragment :
             binding.etName.setText(it.name)
             binding.etCount.setText(it.sum.toString())
             binding.etComment.setText(it.comment)
+
         }
+
         binding.saveButton.setOnClickListener {
             viewModel.editFinanceItem(
                 binding.etName.text?.toString(),

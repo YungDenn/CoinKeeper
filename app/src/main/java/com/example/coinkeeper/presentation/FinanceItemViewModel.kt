@@ -13,11 +13,14 @@ import java.lang.Exception
 
 class FinanceItemViewModel(application: Application): AndroidViewModel(application) {
 
-    private val repository = FinanceItemListRepositoryImpl(application)
+    private val repository = FinanceItemListRepositoryImpl
 
     private val getItemUseCase = GetFinanceItemUseCase(repository)
     private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
     private val editItemUseCase = EditFinanceItemUseCase(repository)
+
+    private val operationListUseCase = GetCategoryOperationListUseCase(repository)
+    val operationList = operationListUseCase.getCategoryOperationsList()
 
     private val scope = CoroutineScope(Dispatchers.Main)
 
@@ -43,12 +46,16 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         get() = _financeBalance
 
 
+    private val _categoryOperations = MutableLiveData<List<CategoryOperation>>()
+    val categoryOperations: LiveData<List<CategoryOperation>>
+        get() = _categoryOperations
+
 
     fun getFinanceItem(FinanceItemId: Int){
-        viewModelScope.launch {
+        //viewModelScope.launch {
             val item = getItemUseCase.getItem(FinanceItemId)
             _financeItem.value = item
-        }
+        //}
     }
 
     fun addFinanceItem(
@@ -68,14 +75,14 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         val categoryId = parseIdCategory(inputCategoryId)
         val fieldsIsValid = validateInput(name, sum)
         if (fieldsIsValid){
-            viewModelScope.launch {
-                val financeItem = FinanceItem(0, name,  comment, sum,  typeOperation, date, categoryId )
+            //viewModelScope.launch {
+                val financeItem = FinanceItem(-1, name,  comment, sum,  typeOperation, date, categoryId )
                 addFinanceItemUseCase.addItem(financeItem)
                 finishWork()
-            }
+            //}
 
         }
-        _financeBalance.value =+ sum
+        //_financeBalance.value =+ sum
     }
 
 
@@ -86,19 +93,16 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         val fieldsIsValid = validateInput(name, count)
         if (fieldsIsValid){
             _financeItem.value?.let {// Если объект не равен null
-                viewModelScope.launch {
+                //viewModelScope.launch {
                     val item = it.copy(name = name, sum = count, comment = comment)
                     editItemUseCase.editItem(item)
                     finishWork()
-                }
+                //}
             }
 
         }
     }
 
-    private fun updateBalance(){
-
-    }
 
     private fun parseName(inputName: String?): String{
         return inputName?.trim() ?: ""
