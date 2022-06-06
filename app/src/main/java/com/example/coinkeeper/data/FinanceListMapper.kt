@@ -1,9 +1,12 @@
 package com.example.coinkeeper.data
 
+import com.example.coinkeeper.domain.CategoryOperation
 import com.example.coinkeeper.domain.FinanceItem
 
 class FinanceListMapper {
 
+
+    //Finance Item
     fun mapEntityToDbModel(financeItem: FinanceItem) = FinanceItemDbModel(
         id = financeItem.id,
         name = financeItem.name,
@@ -26,6 +29,28 @@ class FinanceListMapper {
 
     fun mapListDbModelToListEntity(list: List<FinanceItemDbModel>) = list.map {
         mapDbModelToEntity(it)
+    }
+
+
+    //CategoryOperations
+
+    fun mapEntityToDbModelCategoryOperation(categoryOperation: CategoryOperation) = CategoryOperationDbModel(
+        id = categoryOperation.id,
+        name = categoryOperation.name,
+        image_id = categoryOperation.image_id,
+        typeOperation = categoryOperation.typeOperation
+    )
+
+    fun mapDbModelToEntityCategoryOperation(categoryOperationDbModel: CategoryOperationDbModel) = CategoryOperation(
+        id = categoryOperationDbModel.id,
+        name = categoryOperationDbModel.name,
+        image_id = categoryOperationDbModel.image_id,
+        typeOperation = categoryOperationDbModel.typeOperation
+
+    )
+
+    fun mapListDbModelToListEntityCategoryOperation(list: List<CategoryOperationDbModel>) = list.map {
+        mapDbModelToEntityCategoryOperation(it)
     }
 
 }

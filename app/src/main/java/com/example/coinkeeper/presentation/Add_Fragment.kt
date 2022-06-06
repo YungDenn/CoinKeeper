@@ -1,5 +1,6 @@
 package com.example.coinkeeper.presentation
 
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,7 +16,11 @@ import com.example.coinkeeper.databinding.FragmentAddBinding
 import com.example.coinkeeper.domain.FinanceItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.lang.RuntimeException
-
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
+import android.widget.Toast
+import com.example.coinkeeper.domain.CategoryOperation
+import com.github.mikephil.charting.data.BarEntry
 
 class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
@@ -23,6 +28,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     private lateinit var financeListAdapter: FinanceListAdapter
 
     private lateinit var viewModelMain: MainViewModel
+
 
     private var _binding: FragmentAddBinding? = null
     private val binding: FragmentAddBinding
@@ -35,6 +41,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         viewModelMain.financeList.observe(this) {
             financeListAdapter.submitList(it)
         }
+        firstStart()
     }
 
     override fun onCreateView(
@@ -43,6 +50,11 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     ): View {
         _binding = FragmentAddBinding.inflate(inflater, container, false)
         setupRecyclerView()
+        //setupBalance()
+        PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().apply {
+            putBoolean("firstStart", true)
+            apply()
+        }
         return binding.root
     }
 
@@ -51,7 +63,6 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         viewModelMain = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModelMain.financeList.observe(this) {
             financeListAdapter.submitList(it)
-
         }
     }
 
@@ -69,8 +80,8 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
             buttonExpenseItem.setOnClickListener {
                 launchFragment(FinanceItemFragment.newInstanceAddItemExpense())
             }
-
         }
+
     }
 
     override fun onEditingFinished() {
@@ -139,9 +150,37 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         }
     }
 
+    private fun firstStart(){
+        PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
+            if (!getBoolean("firstStart", false)){
+                Toast.makeText(requireContext(), "FirstLaunch", Toast.LENGTH_SHORT).show()
+                val arrayFinanceItems: ArrayList<FinanceItem> = ArrayList()
+                arrayFinanceItems.add(FinanceItem(0, "Поступление зарплаты", "", 50000, 1, "", 1))
+                arrayFinanceItems.add(FinanceItem(0, "Поступление стипендии", "", 2500, 1, "", 1))
+                arrayFinanceItems.add(FinanceItem(0, "Покупки в магазине", "", 3500, 0, "", 1))
+                val arraySizeFinanceItems = arrayFinanceItems.size -1
+                for(i in 0..arraySizeFinanceItems) {
+                    viewModelMain.addFinanceItem(arrayFinanceItems[i])
+                }
+                val arrayCategoryOperations: ArrayList<CategoryOperation> = ArrayList()
+                arrayCategoryOperations.add(CategoryOperation(0,"Поступление зарплаты", R.drawable.zp,1 ))
+                arrayCategoryOperations.add(CategoryOperation(0,"Пополение карты", R.drawable.zp,1 ))
+                arrayCategoryOperations.add(CategoryOperation(0,"Покупки в магазине", R.drawable.store,0 ))
+                arrayCategoryOperations.add(CategoryOperation(0,"Медицинские услуги", R.drawable.store,0 ))
+                val arraySizeCategoryOperationsItems = arrayCategoryOperations.size -1
+                for(i in 0..arraySizeCategoryOperationsItems) {
+                    viewModelMain.addCategoryOperation(arrayCategoryOperations[i])
+                }
+
+            }
+        }
+    }
+
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+
     }
 
 }

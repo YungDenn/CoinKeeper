@@ -10,6 +10,6 @@ data class FinanceItem(
     val categoryOperationId: Int
 ) {
     companion object{
-        const val ID = -1
+        const val ID = 0
     }
 }

@@ -16,6 +16,10 @@ abstract class AppDatabase: RoomDatabase() {
         private var LOCK = Any()
         private const val DB_NAME = "finance_item.db"
 
+        //Double Check singleton
+        // Если два потока одновременно воспользовались БД ->
+        // один из них зашел в INSTANCE Check, а второй в ожидании
+
         fun getInstance(application: Application): AppDatabase{
             INSTANCE?.let{
                 return it

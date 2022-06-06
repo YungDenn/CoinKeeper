@@ -23,10 +23,13 @@ interface FinanceListDao {
     @Query("SELECT * FROM finance_items WHERE id=:financeItemId LIMIT 1")
     suspend fun getFinanceItem(financeItemId: Int): FinanceItemDbModel
 
+    @Query("DELETE FROM finance_items")
+    suspend fun deleteAll()
+
     //CategoryOperation
 
     @Query("SELECT * FROM category_operations")
-    fun getCategoryOperation(): LiveData<List<CategoryOperationDbModel>>
+    fun getCategoryOperationList(): LiveData<List<CategoryOperationDbModel>>
 
     @Insert (onConflict =  OnConflictStrategy.REPLACE)
     suspend fun addCategoryOperation(categoryOperationDbModel: CategoryOperationDbModel)
@@ -35,8 +38,9 @@ interface FinanceListDao {
     suspend fun getCategoryOperation(categoryOperationId: Int): CategoryOperationDbModel
 
     @Query("SELECT * FROM category_operations WHERE typeOperation=:typeOperation")
-    suspend fun getCategoryOperationByType(typeOperation: Int): CategoryOperationDbModel
+    fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperationDbModel>>
 
-    @Query("DELETE FROM finance_items")
-    suspend fun deleteAll()
+
+
+
 }

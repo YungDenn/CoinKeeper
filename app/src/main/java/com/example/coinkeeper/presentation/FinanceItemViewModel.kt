@@ -5,25 +5,20 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.coinkeeper.data.FinanceItemListRepositoryImpl
 import com.example.coinkeeper.domain.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class FinanceItemViewModel(application: Application): AndroidViewModel(application) {
 
-    private val repository = FinanceItemListRepositoryImpl
+    private val repository = FinanceItemListRepositoryImpl(application)
 
     private val getItemUseCase = GetFinanceItemUseCase(repository)
     private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
     private val editItemUseCase = EditFinanceItemUseCase(repository)
-
     private val operationListUseCase = GetCategoryOperationListUseCase(repository)
+    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
+
     val operationList = operationListUseCase.getCategoryOperationsList()
-
-    private val scope = CoroutineScope(Dispatchers.Main)
-
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -37,26 +32,26 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     val financeItem: LiveData<FinanceItem>
         get() = _financeItem
 
+    private val _categoryOperationsByType = MutableLiveData<List<CategoryOperation>>()
+    val categoryOperationsByType: LiveData<List<CategoryOperation>>
+        get() = _categoryOperationsByType
+
     private val _closeScreen = MutableLiveData<Unit>()
     val closeScreen: LiveData<Unit>
         get() = _closeScreen
 
-    private val _financeBalance = MutableLiveData<Int>()
-    val financeBalance: LiveData<Int>
-        get() = _financeBalance
-
-
-    private val _categoryOperations = MutableLiveData<List<CategoryOperation>>()
-    val categoryOperations: LiveData<List<CategoryOperation>>
-        get() = _categoryOperations
-
 
     fun getFinanceItem(FinanceItemId: Int){
-        //viewModelScope.launch {
+        viewModelScope.launch {
             val item = getItemUseCase.getItem(FinanceItemId)
             _financeItem.value = item
-        //}
+        }
     }
+    fun getCategoryOperationByType(typeOperation: Int):LiveData<List<CategoryOperation>> {
+        val item = getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
+        return item
+    }
+
 
     fun addFinanceItem(
         inputName: String?,
@@ -65,7 +60,7 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         inputTypeOperation: String?,
         inputDate: String?,
         inputCategoryId: String?,
-        ) {
+    ) {
 
         val name = parseName(inputName)
         val sum = parseCount(inputCount)
@@ -75,14 +70,13 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         val categoryId = parseIdCategory(inputCategoryId)
         val fieldsIsValid = validateInput(name, sum)
         if (fieldsIsValid){
-            //viewModelScope.launch {
-                val financeItem = FinanceItem(-1, name,  comment, sum,  typeOperation, date, categoryId )
+            viewModelScope.launch {
+                val financeItem = FinanceItem(0, name,  comment, sum,  typeOperation, date, categoryId )
                 addFinanceItemUseCase.addItem(financeItem)
                 finishWork()
-            //}
-
+            }
         }
-        //_financeBalance.value =+ sum
+
     }
 
 
@@ -93,16 +87,15 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         val fieldsIsValid = validateInput(name, count)
         if (fieldsIsValid){
             _financeItem.value?.let {// Если объект не равен null
-                //viewModelScope.launch {
+                viewModelScope.launch {
                     val item = it.copy(name = name, sum = count, comment = comment)
                     editItemUseCase.editItem(item)
                     finishWork()
-                //}
+                }
             }
 
         }
     }
-
 
     private fun parseName(inputName: String?): String{
         return inputName?.trim() ?: ""

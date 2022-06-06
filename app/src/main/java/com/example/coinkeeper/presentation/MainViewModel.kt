@@ -14,41 +14,43 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application): AndroidViewModel(application){
 
-//    private val repository = FinanceItemListRepositoryImpl(application)
-//
-//    private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
-//    private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
-//    private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
-//
-//    private val scope = CoroutineScope(Dispatchers.Main)
-//
-//    val financeList = getFinanceListUseCase.getFinanceList()
-//    //val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
-//    val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
-//
-//    fun deleteFinanceItem(financeItem: FinanceItem){
-//        //viewModelScope.launch {
-//            deleteFinanceItemUseCase.deleteItem(financeItem)
-//        //}
-//    }
-//    //fun getFinanceBalance(){
-//        //viewModelScope.launch {
-//            //balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
-//        //}
-//    //}
-    private val repository = FinanceItemListRepositoryImpl
+    private val repository = FinanceItemListRepositoryImpl(application)
 
     private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
     private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
     private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
-    //private val editFinanceItemUseCase = EditFinanceItemUseCase(repository)
+    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
+    private val addCategoryOperationUseCase = AddCategoryOperationUseCase(repository)
 
     val financeList = getFinanceListUseCase.getFinanceList()
-    val balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+    var balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+
+
+
 
     fun deleteFinanceItem(financeItem: FinanceItem){
-        deleteFinanceItemUseCase.deleteItem(financeItem)
+        viewModelScope.launch {
+            deleteFinanceItemUseCase.deleteItem(financeItem)
+        }
     }
+    fun getFinanceBalance(){
+        viewModelScope.launch {
+            balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+        }
+    }
+
+    fun addFinanceItem(financeItem: FinanceItem){
+        viewModelScope.launch {
+            addFinanceItemUseCase.addItem(financeItem)
+        }
+    }
+
+    fun addCategoryOperation(categoryOperation: CategoryOperation){
+        viewModelScope.launch {
+            addCategoryOperationUseCase.addCategoryOperation(categoryOperation)
+        }
+    }
+
 
 
 }
