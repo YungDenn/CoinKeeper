@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.coinkeeper.domain.FinanceItem
 
 @Dao
 interface FinanceListDao {
@@ -40,7 +41,10 @@ interface FinanceListDao {
     @Query("SELECT * FROM category_operations WHERE typeOperation=:typeOperation")
     fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperationDbModel>>
 
+    @Query("SELECT * FROM finance_items WHERE typeOperation=:typeOperation")
+    fun getFinanceListByTypeOperation(typeOperation: Int): LiveData<List<FinanceItemDbModel>>
 
-
+    @Query("SELECT * FROM finance_items WHERE category_operations_id=:typeOperation")
+    fun getFinanceListByCategoryOperation(typeOperation: Int): LiveData<List<FinanceItemDbModel>>
 
 }

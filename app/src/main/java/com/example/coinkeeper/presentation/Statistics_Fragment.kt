@@ -24,14 +24,20 @@ import android.widget.ArrayAdapter
 
 import android.widget.Spinner
 import android.widget.AdapterView
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.coinkeeper.domain.CategoryOperation
+import com.example.coinkeeper.domain.FinanceItem
+import kotlinx.android.synthetic.main.fragment_statistics_.*
+import kotlinx.coroutines.launch
 
 
 class Statistics_Fragment : Fragment() {
 
     private lateinit var viewModelMain: MainViewModel
-
     private lateinit var pieChartAll: PieChart
-    private lateinit var pieChartCategory: PieChart
+    private lateinit var pieChartCategoryAdd: PieChart
+    private lateinit var pieChartCategoryExpense: PieChart
     private lateinit var barChar: BarChart
     private lateinit var spinner: Spinner
     private lateinit var adapter: ArrayAdapter<*>
@@ -47,12 +53,13 @@ class Statistics_Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
-
-        pieChartCategory = binding.pieChartCategory
+        viewModelMain = ViewModelProvider(this)[MainViewModel::class.java]
+        binding.lifecycleOwner = viewLifecycleOwner
+        pieChartCategoryAdd = binding.pieChartCategoryAdd
+        pieChartCategoryExpense = binding.pieChartCategoryExpense
         barChar = binding.barChart
         pieChartAll = binding.pieChartAllOperation
         setupSpinner()
-
         return binding.root
     }
 
@@ -80,7 +87,10 @@ class Statistics_Fragment : Fragment() {
                         setupBarChart()
                     }
                     2 -> {
-                        setupPieChartCategory()
+                        setupPieChartCategoryAdd()
+                    }
+                    3 ->{
+                        setupPieChartCategoryExpense()
                     }
                 }
             }
@@ -92,10 +102,12 @@ class Statistics_Fragment : Fragment() {
     }
 
     private fun setupBarChart() {
-        if (barChar.isGone){
-            pieChartCategory.isGone = true
+        if (barChar.isGone) {
+            pieChartCategoryAdd.isGone = true
             pieChartAll.isGone = true
             barChar.isGone = false
+            pieChartCategoryExpense.isGone = true
+
         }
         barChar.description.isEnabled = false
         barChar.setPinchZoom(true)
@@ -123,7 +135,7 @@ class Statistics_Fragment : Fragment() {
         entries.add(BarEntry(4f, 6f, "wasd4"))
         entries.add(BarEntry(5f, 4f, "wasd5"))
         entries.add(BarEntry(6f, 2f, "wasd6"))
-        entries.add(BarEntry(7f, 9f, "wasd7"))
+        entries.add(BarEntry(7f, 5f, "wasd7"))
 
         val colors: ArrayList<Int> = ArrayList()
         for (color in ColorTemplate.MATERIAL_COLORS) {
@@ -136,7 +148,7 @@ class Statistics_Fragment : Fragment() {
         dataSet.colors = colors
         val data = BarData(dataSet)
         data.setDrawValues(true)
-        data.setValueFormatter(PercentFormatter(pieChartCategory))
+        data.setValueFormatter(PercentFormatter(pieChartCategoryAdd))
         data.setValueTextSize(12f)
         data.setValueTextColor(Color.BLACK)
         barChar.data = data
@@ -152,29 +164,25 @@ class Statistics_Fragment : Fragment() {
 
     }
 
-    private fun setupPieChartCategory() {
-
-        if (pieChartCategory.isGone){
-            pieChartCategory.isGone = false
+    private fun setupPieChartCategoryAdd() {
+        if (pieChartCategoryAdd.isGone) {
+            pieChartCategoryAdd.isGone = false
             barChar.isGone = true
             pieChartAll.isGone = true
+            pieChartCategoryExpense.isGone = true
+
 
         }
-//        barChar.isGone = true
-//        pieChartCategory.isGone = false
-//        pieChartAll.isGone = true
+        pieChartCategoryAdd.isGone = false
+        pieChartCategoryAdd.isDrawHoleEnabled = true
+        pieChartCategoryAdd.setUsePercentValues(true)
 
-
-        pieChartCategory.isGone = false
-        pieChartCategory.isDrawHoleEnabled = true
-        pieChartCategory.setUsePercentValues(true)
-
-        pieChartCategory.setEntryLabelTextSize(12f)
-        pieChartCategory.setEntryLabelColor(Color.BLACK)
-        pieChartCategory.centerText = "Поступления по категориям"
-        pieChartCategory.setCenterTextSize(20f)
-        pieChartCategory.description.isEnabled = false
-        legend = pieChartCategory.legend
+        pieChartCategoryAdd.setEntryLabelTextSize(12f)
+        pieChartCategoryAdd.setEntryLabelColor(Color.BLACK)
+        pieChartCategoryAdd.centerText = "Поступления по категориям"
+        pieChartCategoryAdd.setCenterTextSize(20f)
+        pieChartCategoryAdd.description.isEnabled = false
+        legend = pieChartCategoryAdd.legend
         legend.verticalAlignment = com.github.mikephil.charting.components.Legend
             .LegendVerticalAlignment.TOP
         legend.horizontalAlignment = com.github.mikephil.charting.components.Legend
@@ -185,15 +193,14 @@ class Statistics_Fragment : Fragment() {
         legend.isEnabled = false
         legend.textSize = 15f
 
-        loadPieChartData()
+        loadPieChartDataForAdd()
     }
+    //Доходы по категориям
 
-    private fun loadPieChartData() {
+    private fun loadPieChartDataForAdd() {
+        //val sumCategory: ArrayList<Int> = ArrayList()
+        val financeItems: ArrayList<Int> = ArrayList()
         val entries: ArrayList<PieEntry> = ArrayList()
-        entries.add(PieEntry(50000f, "Поступление зарплаты"))
-        entries.add(PieEntry(14000f, "Поступление дивидендов"))
-        entries.add(PieEntry(4000f, "Выплата по страховке"))
-        entries.add(PieEntry(2400f, "Поступление стипендии"))
         val colors: ArrayList<Int> = ArrayList()
         for (color in ColorTemplate.MATERIAL_COLORS) {
             colors.add(color)
@@ -201,38 +208,107 @@ class Statistics_Fragment : Fragment() {
         for (color in ColorTemplate.VORDIPLOM_COLORS) {
             colors.add(color)
         }
-        val dataSet = PieDataSet(entries, "Доходы")
-        dataSet.colors = colors
-        val data = PieData(dataSet)
-        data.setDrawValues(true)
-        data.setValueFormatter(PercentFormatter(pieChartCategory))
-        data.setValueTextSize(12f)
-        data.setValueTextColor(Color.BLACK)
-        pieChartCategory.data = data
-        pieChartCategory.invalidate()
-        pieChartCategory.animateY(1400, Easing.EaseInOutQuad)
+        viewModelMain.getCategoryOperationByType(1).observe(this) { category->
+            category.forEach { category ->
+                //categoryOperation.add(it)
+                viewModelMain.getFinanceItemByCategoryOperation(category.id).observe(this){items ->
+                    items.forEach{
+                        financeItems.add(it.sum)
+                    }
+                    entries.add(PieEntry(financeItems.sum().toFloat(), category.name))
+                    val dataSet = PieDataSet(entries, "Доходы")
+                    dataSet.colors = colors
+                    val data = PieData(dataSet)
+                    data.setDrawValues(true)
+                    data.setValueFormatter(PercentFormatter(pieChartCategoryAdd))
+                    data.setValueTextSize(12f)
+                    data.setValueTextColor(Color.BLACK)
+                    pieChartCategoryAdd.data = data
+                    pieChartCategoryAdd.invalidate()
+                    pieChartCategoryAdd.animateY(1400, Easing.EaseInOutQuad)
+                }
+            }
+        }
     }
+
+    private fun setupPieChartCategoryExpense(){
+        if (pieChartCategoryExpense.isGone) {
+            pieChartCategoryExpense.isGone = false
+            pieChartCategoryAdd.isGone = true
+            barChar.isGone = true
+            pieChartAll.isGone = true
+        }
+        pieChartCategoryExpense.isDrawHoleEnabled = true
+        pieChartCategoryExpense.setUsePercentValues(true)
+        pieChartCategoryExpense.setEntryLabelTextSize(12f)
+        pieChartCategoryExpense.setEntryLabelColor(Color.BLACK)
+        pieChartCategoryExpense.centerText = "Расходы по категориям"
+        pieChartCategoryExpense.setCenterTextSize(20f)
+        pieChartCategoryExpense.description.isEnabled = false
+        legend = pieChartCategoryExpense.legend
+        legend.verticalAlignment = com.github.mikephil.charting.components.Legend
+            .LegendVerticalAlignment.TOP
+        legend.horizontalAlignment = com.github.mikephil.charting.components.Legend
+            .LegendHorizontalAlignment.RIGHT
+        legend.orientation = com.github.mikephil.charting.components.Legend
+            .LegendOrientation.VERTICAL
+        legend.setDrawInside(false)
+        legend.isEnabled = false
+        legend.textSize = 15f
+
+        loadPieChartDataForExpense()
+    }
+    private fun loadPieChartDataForExpense() {
+        //val sumCategory: ArrayList<Int> = ArrayList()
+        val financeItems: ArrayList<Int> = ArrayList()
+        val entries: ArrayList<PieEntry> = ArrayList()
+        val colors: ArrayList<Int> = ArrayList()
+        for (color in ColorTemplate.MATERIAL_COLORS) {
+            colors.add(color)
+        }
+        for (color in ColorTemplate.VORDIPLOM_COLORS) {
+            colors.add(color)
+        }
+        viewModelMain.getCategoryOperationByType(0).observe(this) { category->
+            category.forEach { category ->
+                //categoryOperation.add(it)
+                viewModelMain.getFinanceItemByCategoryOperation(category.id).observe(this){items ->
+                    items.forEach{
+                        financeItems.add(it.sum)
+                    }
+                    entries.add(PieEntry(financeItems.sum().toFloat(), category.name))
+                    val dataSet = PieDataSet(entries, "Доходы")
+                    dataSet.colors = colors
+                    val data = PieData(dataSet)
+                    data.setDrawValues(true)
+                    data.setValueFormatter(PercentFormatter(pieChartCategoryExpense))
+                    data.setValueTextSize(12f)
+                    data.setValueTextColor(Color.BLACK)
+                    pieChartCategoryExpense.data = data
+                    pieChartCategoryExpense.invalidate()
+                    pieChartCategoryExpense.animateY(1400, Easing.EaseInOutQuad)
+                }
+            }
+        }
+    }
+
 
     private fun setupPieChartAll() {
-
-        if (pieChartAll.isGone){
+        if (pieChartAll.isGone) {
             pieChartAll.isGone = false
             barChar.isGone = true
-            pieChartCategory.isGone = true
+            pieChartCategoryAdd.isGone = true
+            pieChartCategoryExpense.isGone = true
         }
-//        barChar.isGone = true
-//        pieChartCategory.isGone = true
-//        pieChartAll.isGone = false
+        pieChartCategoryAdd.isDrawHoleEnabled = true
+        pieChartCategoryAdd.setUsePercentValues(true)
 
-        pieChartCategory.isDrawHoleEnabled = true
-        pieChartCategory.setUsePercentValues(true)
-
-        pieChartCategory.setEntryLabelTextSize(12f)
-        pieChartCategory.setEntryLabelColor(Color.BLACK)
-        pieChartCategory.centerText = "Отношение трат к доходам"
-        pieChartCategory.setCenterTextSize(20f)
-        pieChartCategory.description.isEnabled = false
-        legend = pieChartCategory.legend
+        pieChartCategoryAdd.setEntryLabelTextSize(12f)
+        pieChartCategoryAdd.setEntryLabelColor(Color.BLACK)
+        pieChartCategoryAdd.centerText = "Отношение трат к доходам"
+        pieChartCategoryAdd.setCenterTextSize(20f)
+        pieChartCategoryAdd.description.isEnabled = false
+        legend = pieChartCategoryAdd.legend
         legend.verticalAlignment = com.github.mikephil.charting.components.Legend
             .LegendVerticalAlignment.TOP
         legend.horizontalAlignment = com.github.mikephil.charting.components.Legend
@@ -242,15 +318,10 @@ class Statistics_Fragment : Fragment() {
         legend.setDrawInside(false)
         legend.isEnabled = false
         legend.textSize = 15f
-
         loadPieChartAllData()
     }
-
+    //Загрузка диаграммы с отношением количества доходов к количеству расходов
     private fun loadPieChartAllData() {
-        val entries: ArrayList<PieEntry> = ArrayList()
-        entries.add(PieEntry(70400f, "Доходы"))
-        entries.add(PieEntry(33000f, "Расходы"))
-
         val colors: ArrayList<Int> = ArrayList()
         for (color in ColorTemplate.MATERIAL_COLORS) {
             colors.add(color)
@@ -258,16 +329,48 @@ class Statistics_Fragment : Fragment() {
         for (color in ColorTemplate.VORDIPLOM_COLORS) {
             colors.add(color)
         }
-        val dataSet = PieDataSet(entries, "Операции")
-        dataSet.colors = colors
-        val data = PieData(dataSet)
-        data.setDrawValues(true)
-        data.setValueFormatter(PercentFormatter(pieChartAll))
-        data.setValueTextSize(12f)
-        data.setValueTextColor(Color.BLACK)
-        pieChartAll.data = data
-        pieChartAll.invalidate()
-        pieChartAll.animateY(1400, Easing.EaseInOutQuad)
-    }
+        val entriesForAdd: ArrayList<Int> = ArrayList()
+        val entriesForExpense: ArrayList<Int> = ArrayList()
+        val result: ArrayList<PieEntry> = ArrayList()
 
+        viewModelMain.financeList.observe(this) {
+            entriesForAdd.clear()
+            entriesForExpense.clear()
+            result.clear()
+            viewModelMain.getFinanceItemListByTypeOperation(1).observe(this) { addEntries ->
+                //entriesForAdd.clear()
+                addEntries.forEach { item ->
+                    entriesForAdd.add(item.sum)
+                }
+                result.add(PieEntry(entriesForAdd.sum().toFloat(), "Доходы"))
+                viewModelMain.getFinanceItemListByTypeOperation(0).observe(this) { expenseEntries ->
+                    //entriesForExpense.clear()
+                    expenseEntries.forEach { item ->
+                        entriesForExpense.add(item.sum)
+                    }
+                    result.add(PieEntry(entriesForExpense.sum().toFloat(), "Расходы"))
+                    val dataSet = PieDataSet(result, "Операции")
+                    dataSet.colors = colors
+                    val data = PieData(dataSet)
+                    data.setDrawValues(true)
+                    data.setValueFormatter(PercentFormatter(pieChartAll))
+                    data.setValueTextSize(16f)
+                    data.setValueTextColor(Color.BLACK)
+                    pieChartAll.data = data
+                    pieChartAll.invalidate()
+                    pieChartAll.animateY(1400, Easing.EaseInOutQuad)
+                }
+            }
+        }
+//        val dataSet = PieDataSet(result, "Операции")
+//        //dataSet.colors = colors
+//        val data = PieData(dataSet)
+//        data.setDrawValues(true)
+//        data.setValueFormatter(PercentFormatter(pieChartAll))
+//        data.setValueTextSize(16f)
+//        data.setValueTextColor(Color.BLACK)
+//        pieChartAll.data = data
+//        pieChartAll.invalidate()
+//        pieChartAll.animateY(1400, Easing.EaseInOutQuad)
+    }
 }

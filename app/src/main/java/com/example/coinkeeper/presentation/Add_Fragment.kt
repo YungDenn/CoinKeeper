@@ -156,27 +156,24 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 Toast.makeText(requireContext(), "FirstLaunch", Toast.LENGTH_SHORT).show()
                 val arrayFinanceItems: ArrayList<FinanceItem> = ArrayList()
                 arrayFinanceItems.add(FinanceItem(0, "Поступление зарплаты", "", 50000, 1, "", 1))
-                arrayFinanceItems.add(FinanceItem(0, "Поступление стипендии", "", 2500, 1, "", 1))
-                arrayFinanceItems.add(FinanceItem(0, "Покупки в магазине", "", 3500, 0, "", 1))
+                arrayFinanceItems.add(FinanceItem(0, "Поступление стипендии", "", 2500, 1, "", 2))
+                arrayFinanceItems.add(FinanceItem(0, "Покупки в магазине", "", 3500, 0, "", 3))
                 val arraySizeFinanceItems = arrayFinanceItems.size -1
                 for(i in 0..arraySizeFinanceItems) {
                     viewModelMain.addFinanceItem(arrayFinanceItems[i])
                 }
                 val arrayCategoryOperations: ArrayList<CategoryOperation> = ArrayList()
-                arrayCategoryOperations.add(CategoryOperation(0,"Поступление зарплаты", R.drawable.zp,1 ))
-                arrayCategoryOperations.add(CategoryOperation(0,"Пополение карты", R.drawable.zp,1 ))
-                arrayCategoryOperations.add(CategoryOperation(0,"Покупки в магазине", R.drawable.store,0 ))
-                arrayCategoryOperations.add(CategoryOperation(0,"Медицинские услуги", R.drawable.store,0 ))
+                arrayCategoryOperations.add(CategoryOperation(1,"Поступление зарплаты", R.drawable.zp,1 ))
+                arrayCategoryOperations.add(CategoryOperation(2,"Пополение карты", R.drawable.zp,1 ))
+                arrayCategoryOperations.add(CategoryOperation(3,"Покупки в магазине", R.drawable.store,0 ))
+                arrayCategoryOperations.add(CategoryOperation(4,"Медицинские услуги", R.drawable.store,0 ))
                 val arraySizeCategoryOperationsItems = arrayCategoryOperations.size -1
                 for(i in 0..arraySizeCategoryOperationsItems) {
                     viewModelMain.addCategoryOperation(arrayCategoryOperations[i])
                 }
-
             }
         }
     }
-
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

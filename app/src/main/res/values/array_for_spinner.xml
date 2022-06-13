@@ -4,6 +4,7 @@
         <item>Отношение трат к доходам</item>
         <item>Доходы по категориям</item>
         <item>Доходы по категориям</item>
+        <item>Расходы по категориям</item>
     </string-array>
 
     <string-array name="spinner_type_chart">

@@ -18,8 +18,6 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     private val operationListUseCase = GetCategoryOperationListUseCase(repository)
     private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
 
-    val operationList = operationListUseCase.getCategoryOperationsList()
-
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
         get() = _errorInputName
@@ -32,9 +30,6 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     val financeItem: LiveData<FinanceItem>
         get() = _financeItem
 
-    private val _categoryOperationsByType = MutableLiveData<List<CategoryOperation>>()
-    val categoryOperationsByType: LiveData<List<CategoryOperation>>
-        get() = _categoryOperationsByType
 
     private val _closeScreen = MutableLiveData<Unit>()
     val closeScreen: LiveData<Unit>
@@ -47,9 +42,8 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
             _financeItem.value = item
         }
     }
-    fun getCategoryOperationByType(typeOperation: Int):LiveData<List<CategoryOperation>> {
-        val item = getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
-        return item
+    fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>> {
+        return getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
     }
 
 

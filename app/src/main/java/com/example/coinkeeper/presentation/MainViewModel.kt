@@ -1,10 +1,7 @@
 package com.example.coinkeeper.presentation
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.coinkeeper.data.FinanceItemListRepositoryImpl
 import com.example.coinkeeper.domain.*
 import kotlinx.coroutines.CoroutineScope
@@ -21,12 +18,12 @@ class MainViewModel(application: Application): AndroidViewModel(application){
     private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
     private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
     private val addCategoryOperationUseCase = AddCategoryOperationUseCase(repository)
+    private val getFinanceListByTypeOperationUseCase = GetFinanceListByTypeOperationUseCase(repository)
+    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
+    private val getFinanceListByCategoryOperationUseCase = GetFinanceListByCategoryOperationUseCase(repository)
 
     val financeList = getFinanceListUseCase.getFinanceList()
     var balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
-
-
-
 
     fun deleteFinanceItem(financeItem: FinanceItem){
         viewModelScope.launch {
@@ -51,6 +48,15 @@ class MainViewModel(application: Application): AndroidViewModel(application){
         }
     }
 
+    fun getFinanceItemListByTypeOperation(typeOperation:Int): LiveData<List<FinanceItem>>{
+        return getFinanceListByTypeOperationUseCase.getFinanceItemListByTypeOperation(typeOperation)
+    }
 
+    fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>>{
+        return getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
+    }
 
+    fun getFinanceItemByCategoryOperation(idCategory: Int): LiveData<List<FinanceItem>>{
+        return getFinanceListByCategoryOperationUseCase.getFinanceListByCategoryOperation(idCategory)
+    }
 }

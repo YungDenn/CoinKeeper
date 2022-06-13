@@ -25,4 +25,8 @@ interface FinanceItemRepository {
 
     fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>>
 
+    fun getFinanceItemListByTypeOperation(typeOperation: Int): LiveData<List<FinanceItem>>
+
+    fun getFinanceListByCategoryOperation(typeCategory: Int): LiveData<List<FinanceItem>>
+
 }

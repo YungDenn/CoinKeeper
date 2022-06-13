@@ -49,15 +49,6 @@ class FinanceItemListRepositoryImpl(application: Application) : FinanceItemRepos
         return mapper.mapDbModelToEntityCategoryOperation(dbModel)
     }
 
-//    init {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            for (i in 0 until 3) {
-//                val item = FinanceItem(0, "Test$i", "test", i + 100, 1, "20-02-2020", 1)
-//                addItem(item)
-//            }
-//        }
-//    }
-
     override suspend fun addItem(financeItem: FinanceItem) {
         CoroutineScope(Dispatchers.IO).launch {
             financeListDao.addFinanceItem(mapper.mapEntityToDbModel(financeItem))
@@ -96,5 +87,15 @@ class FinanceItemListRepositoryImpl(application: Application) : FinanceItemRepos
     override fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>> =
         Transformations.map(financeListDao.getCategoryOperationByType(typeOperation)) {
             mapper.mapListDbModelToListEntityCategoryOperation(it)
+        }
+
+    override fun getFinanceItemListByTypeOperation(typeOperation: Int): LiveData<List<FinanceItem>> =
+        Transformations.map(financeListDao.getFinanceListByTypeOperation(typeOperation)) {
+            mapper.mapListDbModelToListEntity(it)
+        }
+
+    override fun getFinanceListByCategoryOperation(typeCategory: Int): LiveData<List<FinanceItem>> =
+        Transformations.map(financeListDao.getFinanceListByCategoryOperation(typeCategory)) {
+            mapper.mapListDbModelToListEntity(it)
         }
 }
