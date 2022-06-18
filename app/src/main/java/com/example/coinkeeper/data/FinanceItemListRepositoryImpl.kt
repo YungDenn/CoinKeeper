@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.example.coinkeeper.domain.Account
 import com.example.coinkeeper.domain.CategoryOperation
 import com.example.coinkeeper.domain.FinanceItem
 import com.example.coinkeeper.domain.FinanceItemRepository
@@ -52,7 +53,7 @@ class FinanceItemListRepositoryImpl(application: Application) : FinanceItemRepos
     override suspend fun addItem(financeItem: FinanceItem) {
         CoroutineScope(Dispatchers.IO).launch {
             financeListDao.addFinanceItem(mapper.mapEntityToDbModel(financeItem))
-            updateBalance(financeItem.sum, financeItem.typeOperation)
+            //updateBalance(financeItem.sum, financeItem.typeOperation)
             //TODO исправить баг с отображением баланса
         }
     }
@@ -60,7 +61,7 @@ class FinanceItemListRepositoryImpl(application: Application) : FinanceItemRepos
 
     override suspend fun deleteItem(financeItem: FinanceItem) {
         financeListDao.deleteFinanceItem(financeItem.id)
-        updateBalance(financeItem.sum, financeItem.typeOperation)
+        //updateBalance(financeItem.sum, financeItem.typeOperation)
         //balanceLD.value = -financeItem.sum
     }
 
@@ -98,4 +99,20 @@ class FinanceItemListRepositoryImpl(application: Application) : FinanceItemRepos
         Transformations.map(financeListDao.getFinanceListByCategoryOperation(typeCategory)) {
             mapper.mapListDbModelToListEntity(it)
         }
+
+    override suspend fun addAccount(account: Account) {
+        CoroutineScope(Dispatchers.IO).launch {
+            financeListDao.addAccount(mapper.mapEntityToDbModelAccount(account))
+        }
+    }
+
+    override suspend fun updateAccountBalance(id: Int, sum: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            financeListDao.updateAccountBalance(id, sum)
+        }
+    }
+
+    override fun getAccountBalance(id: Int): LiveData<Int> {
+        return financeListDao.getAccountBalance(id)
+    }
 }

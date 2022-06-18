@@ -21,24 +21,40 @@ class MainViewModel(application: Application): AndroidViewModel(application){
     private val getFinanceListByTypeOperationUseCase = GetFinanceListByTypeOperationUseCase(repository)
     private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
     private val getFinanceListByCategoryOperationUseCase = GetFinanceListByCategoryOperationUseCase(repository)
+    private val getAccountBalanceUseCase = GetAccountBalanceUseCase(repository)
+    private val addAccountUseCase = AddAccountUseCase(repository)
+    private val updateAccountBalance = UpdateAccountBalance(repository)
 
     val financeList = getFinanceListUseCase.getFinanceList()
     var balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+
+    val accountBalance = getAccountBalanceUseCase.getAccountBalance(1)
+
+
 
     fun deleteFinanceItem(financeItem: FinanceItem){
         viewModelScope.launch {
             deleteFinanceItemUseCase.deleteItem(financeItem)
         }
+        ///updateBalance(1)
     }
-    fun getFinanceBalance(){
+
+
+
+    fun updateBalance(sum: Int){
         viewModelScope.launch {
-            balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
+            updateAccountBalance.updateBalance(1, sum)
         }
     }
+
 
     fun addFinanceItem(financeItem: FinanceItem){
         viewModelScope.launch {
             addFinanceItemUseCase.addItem(financeItem)
+                when (financeItem.typeOperation){
+                    0 -> updateAccountBalance.updateBalance(1, 55555)
+                    1 -> updateAccountBalance.updateBalance(1, 11111)
+                }
         }
     }
 
@@ -58,5 +74,11 @@ class MainViewModel(application: Application): AndroidViewModel(application){
 
     fun getFinanceItemByCategoryOperation(idCategory: Int): LiveData<List<FinanceItem>>{
         return getFinanceListByCategoryOperationUseCase.getFinanceListByCategoryOperation(idCategory)
+    }
+
+    fun addAccount(account: Account){
+        viewModelScope.launch {
+            addAccountUseCase.addAccount(account)
+        }
     }
 }

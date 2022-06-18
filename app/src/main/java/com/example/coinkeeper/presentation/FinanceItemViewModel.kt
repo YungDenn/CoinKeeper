@@ -30,6 +30,10 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     val financeItem: LiveData<FinanceItem>
         get() = _financeItem
 
+    private val _balance = MutableLiveData<Int>()
+    val balance: LiveData<Int>
+        get() = _balance
+
 
     private val _closeScreen = MutableLiveData<Unit>()
     val closeScreen: LiveData<Unit>
@@ -67,6 +71,7 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
             viewModelScope.launch {
                 val financeItem = FinanceItem(0, name,  comment, sum,  typeOperation, date, categoryId )
                 addFinanceItemUseCase.addItem(financeItem)
+                _balance.value = sum
                 finishWork()
             }
         }

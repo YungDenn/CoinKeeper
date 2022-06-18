@@ -3,7 +3,6 @@ package com.example.coinkeeper.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.coinkeeper.domain.CategoryOperation
 
 @Entity(tableName = "finance_items")
 data class FinanceItemDbModel(

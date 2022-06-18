@@ -47,4 +47,15 @@ interface FinanceListDao {
     @Query("SELECT * FROM finance_items WHERE category_operations_id=:typeOperation")
     fun getFinanceListByCategoryOperation(typeOperation: Int): LiveData<List<FinanceItemDbModel>>
 
+    //Account
+
+    @Insert (onConflict =  OnConflictStrategy.REPLACE)
+    suspend fun addAccount(accountDbModel: AccountDbModel)
+
+    @Query("UPDATE accounts set sum =:sumNew where id =:idAccount ")
+    fun updateAccountBalance(idAccount: Int, sumNew: Int)
+
+
+    @Query("SELECT sum FROM accounts WHERE id=:idAccount LIMIT 1")
+    fun getAccountBalance(idAccount: Int): LiveData<Int>
 }

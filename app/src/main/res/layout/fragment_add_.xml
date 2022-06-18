@@ -47,7 +47,6 @@
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/tvLabel"
             app:layout_constraintTop_toTopOf="parent"
-            app:numberAsText="@{viewModel.balanceLD}"
             tools:text="100" />
 
         <androidx.recyclerview.widget.RecyclerView

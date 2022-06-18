@@ -29,4 +29,10 @@ interface FinanceItemRepository {
 
     fun getFinanceListByCategoryOperation(typeCategory: Int): LiveData<List<FinanceItem>>
 
+    suspend fun addAccount(account: Account)
+
+    suspend fun updateAccountBalance (id: Int, sum: Int)
+
+    fun getAccountBalance(id: Int): LiveData<Int>
+
 }

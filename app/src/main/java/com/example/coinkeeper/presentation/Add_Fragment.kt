@@ -1,26 +1,21 @@
 package com.example.coinkeeper.presentation
 
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FragmentAddBinding
 import com.example.coinkeeper.domain.FinanceItem
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.lang.RuntimeException
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.widget.Toast
+import com.example.coinkeeper.domain.Account
 import com.example.coinkeeper.domain.CategoryOperation
-import com.github.mikephil.charting.data.BarEntry
 
 class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
@@ -28,7 +23,6 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     private lateinit var financeListAdapter: FinanceListAdapter
 
     private lateinit var viewModelMain: MainViewModel
-
 
     private var _binding: FragmentAddBinding? = null
     private val binding: FragmentAddBinding
@@ -60,7 +54,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
     override fun onStart() {
         super.onStart()
-        viewModelMain = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModelMain = ViewModelProvider(this)[MainViewModel::class.java]
         viewModelMain.financeList.observe(this) {
             financeListAdapter.submitList(it)
         }
@@ -80,6 +74,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
             buttonExpenseItem.setOnClickListener {
                 launchFragment(FinanceItemFragment.newInstanceAddItemExpense())
             }
+            setupBalance()
         }
 
     }
@@ -90,8 +85,8 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
     private fun setupBalance() {
         val tvBalance = binding.tvBalance
-        viewModelMain.balanceLD.observe(this) {
-            tvBalance.setText(it.toString())
+        viewModelMain.accountBalance.observe(this) {
+            tvBalance.text = it.toString()
         }
     }
 
@@ -171,6 +166,9 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 for(i in 0..arraySizeCategoryOperationsItems) {
                     viewModelMain.addCategoryOperation(arrayCategoryOperations[i])
                 }
+
+                val account = Account(0, "Основной", 49000)
+                viewModelMain.addAccount(account)
             }
         }
     }
