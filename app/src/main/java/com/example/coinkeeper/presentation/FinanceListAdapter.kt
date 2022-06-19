@@ -51,7 +51,7 @@ class FinanceListAdapter :
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        return if (item.category == 1) {
+        return if (item.typeOperation == 1) {
             VIEW_TYPE_INCOME
         } else {
             VIEW_TYPE_EXPENSE

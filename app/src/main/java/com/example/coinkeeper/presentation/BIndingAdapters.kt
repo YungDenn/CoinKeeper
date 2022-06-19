@@ -1,5 +1,6 @@
 package com.example.coinkeeper.presentation
 
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.coinkeeper.R
 import com.google.android.material.textfield.TextInputLayout
@@ -22,4 +23,9 @@ fun bindErrorInputCount(textInputLayout: TextInputLayout, isError: Boolean){
         null
     }
     textInputLayout.error = message
+}
+
+@BindingAdapter("numberAsText")
+fun bindNumberAsText(textView: TextView, number: Int) {
+    textView.text = number.toString()
 }

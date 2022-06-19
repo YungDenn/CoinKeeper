@@ -5,18 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FragmentAddBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.coinkeeper.domain.FinanceItem
 import java.lang.RuntimeException
-
+import android.preference.PreferenceManager
+import android.widget.Toast
+import com.example.coinkeeper.domain.Account
+import com.example.coinkeeper.domain.CategoryOperation
 
 class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
+
 
     private lateinit var financeListAdapter: FinanceListAdapter
 
@@ -33,6 +35,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         viewModelMain.financeList.observe(this) {
             financeListAdapter.submitList(it)
         }
+        firstStart()
     }
 
     override fun onCreateView(
@@ -41,15 +44,19 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     ): View {
         _binding = FragmentAddBinding.inflate(inflater, container, false)
         setupRecyclerView()
+        //setupBalance()
+        PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().apply {
+            putBoolean("firstStart", true)
+            apply()
+        }
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        viewModelMain = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModelMain = ViewModelProvider(this)[MainViewModel::class.java]
         viewModelMain.financeList.observe(this) {
             financeListAdapter.submitList(it)
-
         }
     }
 
@@ -67,8 +74,9 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
             buttonExpenseItem.setOnClickListener {
                 launchFragment(FinanceItemFragment.newInstanceAddItemExpense())
             }
-
+            setupBalance()
         }
+
     }
 
     override fun onEditingFinished() {
@@ -77,8 +85,8 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
     private fun setupBalance() {
         val tvBalance = binding.tvBalance
-        viewModelMain.balanceLD.observe(this) {
-            tvBalance.setText(it.toString())
+        viewModelMain.accountBalance.observe(this) {
+            tvBalance.text = it.toString()
         }
     }
 
@@ -137,9 +145,37 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         }
     }
 
+    private fun firstStart(){
+        PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
+            if (!getBoolean("firstStart", false)){
+                Toast.makeText(requireContext(), "FirstLaunch", Toast.LENGTH_SHORT).show()
+                val arrayFinanceItems: ArrayList<FinanceItem> = ArrayList()
+                arrayFinanceItems.add(FinanceItem(0, "Поступление зарплаты", "", 50000, 1, "", 1))
+                arrayFinanceItems.add(FinanceItem(0, "Поступление стипендии", "", 2500, 1, "", 2))
+                arrayFinanceItems.add(FinanceItem(0, "Покупки в магазине", "", 3500, 0, "", 3))
+                val arraySizeFinanceItems = arrayFinanceItems.size -1
+                for(i in 0..arraySizeFinanceItems) {
+                    viewModelMain.addFinanceItem(arrayFinanceItems[i])
+                }
+                val arrayCategoryOperations: ArrayList<CategoryOperation> = ArrayList()
+                arrayCategoryOperations.add(CategoryOperation(1,"Поступление зарплаты", R.drawable.zp,1 ))
+                arrayCategoryOperations.add(CategoryOperation(2,"Пополение карты", R.drawable.zp,1 ))
+                arrayCategoryOperations.add(CategoryOperation(3,"Покупки в магазине", R.drawable.store,0 ))
+                arrayCategoryOperations.add(CategoryOperation(4,"Медицинские услуги", R.drawable.store,0 ))
+                val arraySizeCategoryOperationsItems = arrayCategoryOperations.size -1
+                for(i in 0..arraySizeCategoryOperationsItems) {
+                    viewModelMain.addCategoryOperation(arrayCategoryOperations[i])
+                }
+
+                val account = Account(0, "Основной", 49000)
+                viewModelMain.addAccount(account)
+            }
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+
     }
 
 }

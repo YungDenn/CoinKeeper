@@ -1,13 +1,15 @@
 package com.example.coinkeeper.domain
 
 data class FinanceItem(
+    var id:Int = ID,
     val name: String,
     val comment: String,
     val sum: Int,
-    val category: Int,
-    var id:Int = UNDEFINED_ID
+    val typeOperation: Int,
+    val date: String,
+    val categoryOperationId: Int
 ) {
     companion object{
-        const val UNDEFINED_ID = -1
+        const val ID = 0
     }
 }

@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">CoinKeeper</string>
-    <string name="hint_name_add_item">Name:</string>
-    <string name="hint_count_add_item">Count:</string>
-    <string name="hint_bSave_add_item">Save</string>
-    <string name="hint_comment_add_item">Comment:</string>
-    <string name="error_input_count">Invalid number</string>
-    <string name="error_input_name">Invalid name</string>
-    <string name="current_date">Date: %1$s</string>
+    <string name="hint_name_add_item">Название:</string>
+    <string name="hint_count_add_item">Сумма:</string>
+    <string name="hint_bSave_add_item">Сохранить</string>
+    <string name="hint_comment_add_item">Комменатрий:</string>
+    <string name="error_input_count">Неверное число</string>
+    <string name="error_input_name">Неверное название</string>
+    <string name="current_date">Дата: %1$s</string>
 
 
 </resources>

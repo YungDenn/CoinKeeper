@@ -11,4 +11,5 @@
     <color name="expense_finance_item">#E64A6E</color>
     <color name="minusB_color">#FF0057</color>
     <color name="addB_color">#89FF00</color>
+    <color name ="fields_grey">#CBC6C6C6</color>
 </resources>

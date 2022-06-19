@@ -1,20 +1,22 @@
 package com.example.coinkeeper.presentation
 
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
 import com.example.coinkeeper.data.FinanceItemListRepositoryImpl
 import com.example.coinkeeper.domain.*
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class FinanceItemViewModel: ViewModel() {
-    private val repository = FinanceItemListRepositoryImpl
+class FinanceItemViewModel(application: Application): AndroidViewModel(application) {
+
+    private val repository = FinanceItemListRepositoryImpl(application)
 
     private val getItemUseCase = GetFinanceItemUseCase(repository)
     private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
     private val editItemUseCase = EditFinanceItemUseCase(repository)
-
+    private val operationListUseCase = GetCategoryOperationListUseCase(repository)
+    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -28,36 +30,52 @@ class FinanceItemViewModel: ViewModel() {
     val financeItem: LiveData<FinanceItem>
         get() = _financeItem
 
+    private val _balance = MutableLiveData<Int>()
+    val balance: LiveData<Int>
+        get() = _balance
+
+
     private val _closeScreen = MutableLiveData<Unit>()
     val closeScreen: LiveData<Unit>
         get() = _closeScreen
 
-    private val _financeBalance = MutableLiveData<Int>()
-    val financeBalance: LiveData<Int>
-        get() = _financeBalance
 
     fun getFinanceItem(FinanceItemId: Int){
-        val item = getItemUseCase.getItem(FinanceItemId)
-        _financeItem.value = item
+        viewModelScope.launch {
+            val item = getItemUseCase.getItem(FinanceItemId)
+            _financeItem.value = item
+        }
     }
+    fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>> {
+        return getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
+    }
+
 
     fun addFinanceItem(
         inputName: String?,
         inputCount: String?,
         inputComment: String?,
-        inputCategory: String?) {
+        inputTypeOperation: String?,
+        inputDate: String?,
+        inputCategoryId: String?,
+    ) {
 
         val name = parseName(inputName)
-        val count = parseCount(inputCount)
+        val sum = parseCount(inputCount)
         val comment = parseComment(inputComment)
-        val category = parseCategory(inputCategory)
-        val fieldsIsValid = validateInput(name, count)
+        val typeOperation = parseTypeOperation(inputTypeOperation)
+        val date = parseDate(inputDate)
+        val categoryId = parseIdCategory(inputCategoryId)
+        val fieldsIsValid = validateInput(name, sum)
         if (fieldsIsValid){
-            val financeItem = FinanceItem(name, comment, count, category)
-            addFinanceItemUseCase.addItem(financeItem)
-            finishWork()
+            viewModelScope.launch {
+                val financeItem = FinanceItem(0, name,  comment, sum,  typeOperation, date, categoryId )
+                addFinanceItemUseCase.addItem(financeItem)
+                _balance.value = sum
+                finishWork()
+            }
         }
-        _financeBalance.value = count
+
     }
 
 
@@ -68,9 +86,11 @@ class FinanceItemViewModel: ViewModel() {
         val fieldsIsValid = validateInput(name, count)
         if (fieldsIsValid){
             _financeItem.value?.let {// Если объект не равен null
-                val item =it.copy(name = name, sum = count, comment = comment)
-                editItemUseCase.editItem(item)
-                finishWork()
+                viewModelScope.launch {
+                    val item = it.copy(name = name, sum = count, comment = comment)
+                    editItemUseCase.editItem(item)
+                    finishWork()
+                }
             }
 
         }
@@ -92,9 +112,19 @@ class FinanceItemViewModel: ViewModel() {
             0
         }
     }
-    private fun parseCategory(inputCategory: String?) : Int {
+    private fun parseTypeOperation(inputType: String?) : Int {
         return try {
-            inputCategory?.trim()?.toInt() ?: 0
+            inputType?.trim()?.toInt() ?: 0
+        } catch (e: Exception) {
+            0
+        }
+    }
+    private fun parseDate(inputDate: String?) : String {
+        return inputDate?.trim() ?: ""
+    }
+    private fun parseIdCategory(inputCategoryId: String?) : Int {
+        return try {
+            inputCategoryId?.trim()?.toInt() ?: 0
         } catch (e: Exception) {
             0
         }
