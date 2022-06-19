@@ -12,10 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FragmentFinanceItemBinding
 import com.example.coinkeeper.domain.FinanceItem
@@ -23,8 +20,6 @@ import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 import java.util.*
 import com.example.coinkeeper.domain.CategoryOperation
-import kotlinx.coroutines.launch
-import kotlin.collections.ArrayList
 
 
 class FinanceItemFragment :
@@ -34,6 +29,7 @@ class FinanceItemFragment :
 
     private lateinit var viewModel: FinanceItemViewModel
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+    private lateinit var spinnerAdapter: SpinnerAdapter
 
     private var _binding: FragmentFinanceItemBinding? = null
     private val binding: FragmentFinanceItemBinding
@@ -63,7 +59,7 @@ class FinanceItemFragment :
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
-        }else{
+        } else {
             throw RuntimeException("Activity must implement OnEditingFinishedListener")
         }
     }
@@ -78,8 +74,12 @@ class FinanceItemFragment :
         return binding.root
     }
 
-    private fun initSpinner(spinner: Spinner, categoryOperationList: List<CategoryOperation>) {
-        val spinnerAdapter = SpinnerAdapter(requireContext(), categoryOperationList)
+    private fun initSpinner(
+        spinner: Spinner,
+        categoryOperationList: List<CategoryOperation>,
+        selectedItem: Int = 0
+    ) {
+        spinnerAdapter = SpinnerAdapter(requireContext(), categoryOperationList)
         spinner.adapter = spinnerAdapter
         spinner.onItemSelectedListener =
             (object : AdapterView.OnItemSelectedListener {
@@ -92,10 +92,12 @@ class FinanceItemFragment :
                     //mPosition = position
                     //Toast.makeText(requireContext(),"Item Selected: ${categoryOperationList[position].name}", Toast.LENGTH_SHORT ).show()
                 }
+
                 override fun onNothingSelected(parent: AdapterView<*>?) {
 
                 }
             })
+        spinner.setSelection(selectedItem)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,10 +112,11 @@ class FinanceItemFragment :
         pickDate()
         setThisMoment()
     }
-    private fun getCategoryOperationList(typeOperation: Int){
+
+    private fun getCategoryOperationList(typeOperation: Int, selectedItem: Int = 0) {
         viewModel = ViewModelProvider(this)[FinanceItemViewModel::class.java]
-        viewModel.getCategoryOperationByType(typeOperation).observe(this){
-            initSpinner(spinner, it)
+        viewModel.getCategoryOperationByType(typeOperation).observe(this) {
+            initSpinner(spinner, it, selectedItem)
         }
 
     }
@@ -127,38 +130,59 @@ class FinanceItemFragment :
     }
 
     private fun launchEditMode() {
+
         viewModel.getFinanceItem(financeItemId)
         viewModel.financeItem.observe(viewLifecycleOwner) {
             binding.etName.setText(it.name)
             binding.etCount.setText(it.sum.toString())
             binding.etComment.setText(it.comment)
             typeOperation = it.typeOperation
-            getCategoryOperationList(typeOperation)
+            if (it.typeOperation == 1) {
+                getCategoryOperationList(typeOperation, it.categoryOperationId - 1)
+            } else {
+                getCategoryOperationList(typeOperation, it.categoryOperationId - 4)
+            }
+            //getCategoryOperationList(typeOperation)
         }
 
         binding.saveButton.setOnClickListener {
+            var position = binding.spinner.selectedItemPosition
+            if (typeOperation == 1){
+                position += 1
+            }
+            else{
+                position += 4
+            }
             viewModel.editFinanceItem(
                 binding.etName.text?.toString(),
                 binding.etCount.text?.toString(),
-                binding.etComment.text?.toString()
+                binding.etComment.text?.toString(),
+                position.toString()
             )
         }
     }
 
 
-
-
     private fun launchAddMode() {
         getCategoryOperationList(typeOperation)
+
         binding.saveButton.setOnClickListener {
+            var position = binding.spinner.selectedItemPosition
+            if (typeOperation == 1){
+                position += 1
+            }
+            else{
+                position += 4
+            }
             viewModel.addFinanceItem(
                 binding.etName.text?.toString(),
                 binding.etCount.text?.toString(),
                 binding.etComment.text?.toString(),
                 typeOperation.toString(),
                 binding.etDate.text.toString(),
-                "1"
+                position.toString()
             )
+
         }
     }
 
@@ -208,7 +232,7 @@ class FinanceItemFragment :
             }
             financeItemId = args.getInt(FINANCE_ITEM_ID, FinanceItem.ID)
         }
-        when (args.getString(OPERATION_TYPE)){
+        when (args.getString(OPERATION_TYPE)) {
             OPERATION_EXPENSE -> typeOperation = 0
             OPERATION_INCOME -> typeOperation = 1
         }
@@ -216,8 +240,7 @@ class FinanceItemFragment :
     }
 
 
-
-    private fun getDateTimeCalendar(){
+    private fun getDateTimeCalendar() {
         val calendar = Calendar.getInstance()
         day = calendar.get(Calendar.DAY_OF_MONTH)
         month = calendar.get(Calendar.MONTH)
@@ -226,10 +249,10 @@ class FinanceItemFragment :
         minute = calendar.get(Calendar.MINUTE)
     }
 
-    private fun pickDate(){
-        binding.etDate.setOnClickListener{
+    private fun pickDate() {
+        binding.etDate.setOnClickListener {
             getDateTimeCalendar()
-            DatePickerDialog(requireContext(),this, year, month, day).show()
+            DatePickerDialog(requireContext(), this, year, month, day).show()
         }
     }
 
@@ -251,14 +274,14 @@ class FinanceItemFragment :
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun setThisMoment(){
-        val sdf = SimpleDateFormat("dd/MM kk:mm" )
+    private fun setThisMoment() {
+        val sdf = SimpleDateFormat("dd/MM kk:mm")
         val currentDate = sdf.format(Date())
         val dateToET = getString(R.string.current_date, currentDate.toString())
         binding.etDate.text = dateToET
     }
 
-    interface OnEditingFinishedListener{
+    interface OnEditingFinishedListener {
         fun onEditingFinished()
     }
 

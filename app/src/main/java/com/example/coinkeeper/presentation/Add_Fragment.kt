@@ -162,22 +162,28 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 val arrayFinanceItems: ArrayList<FinanceItem> = ArrayList()
                 arrayFinanceItems.add(FinanceItem(0, "Поступление зарплаты", "", 50000, 1, "", 1))
                 arrayFinanceItems.add(FinanceItem(0, "Поступление стипендии", "", 2500, 1, "", 2))
+                arrayFinanceItems.add(FinanceItem(0, "Продажа акций", "", 15500, 1, "", 3))
                 arrayFinanceItems.add(FinanceItem(0, "Покупка курсов", "", 15000, 0, "", 6))
                 arrayFinanceItems.add(FinanceItem(0, "Зачиление кешбека", "", 1500, 1, "", 2))
                 arrayFinanceItems.add(FinanceItem(0, "Зачиление дивидендов", "", 3000, 1, "", 3))
                 arrayFinanceItems.add(FinanceItem(0, "Покупка лекарств", "", 3500, 0, "", 5))
                 arrayFinanceItems.add(FinanceItem(0, "Покупки в магазине", "", 3500, 0, "", 4))
+                arrayFinanceItems.add(FinanceItem(0, "Покупка билетов", "", 7500, 0, "", 7))
+                arrayFinanceItems.add(FinanceItem(0, "ТО Авто", "", 10500, 0, "", 4))
                 val arraySizeFinanceItems = arrayFinanceItems.size -1
                 for(i in 0..arraySizeFinanceItems) {
                     viewModelMain.addFinanceItem(arrayFinanceItems[i])
                 }
                 val arrayCategoryOperations: ArrayList<CategoryOperation> = ArrayList()
                 arrayCategoryOperations.add(CategoryOperation(1,"Поступление зарплаты", R.drawable.zp,1 ))
-                arrayCategoryOperations.add(CategoryOperation(2,"Пополение карты", R.drawable.card,1 ))
-                arrayCategoryOperations.add(CategoryOperation(3,"Поступление дивидентов", R.drawable.dividend,1 ))
-                arrayCategoryOperations.add(CategoryOperation(4,"Покупки в магазине", R.drawable.store,0 ))
-                arrayCategoryOperations.add(CategoryOperation(5,"Медицинские услуги", R.drawable.medicine,0 ))
-                arrayCategoryOperations.add(CategoryOperation(6,"Оброзовательныне услуги", R.drawable.education,0 ))
+                arrayCategoryOperations.add(CategoryOperation(2,"Переводы на карту", R.drawable.card,1 ))
+                arrayCategoryOperations.add(CategoryOperation(3,"Инвестиции", R.drawable.dividend,1 ))
+                arrayCategoryOperations.add(CategoryOperation(4,"Магазины", R.drawable.store,0 ))
+                arrayCategoryOperations.add(CategoryOperation(5,"Медицина", R.drawable.medicine,0 ))
+                arrayCategoryOperations.add(CategoryOperation(6,"Оброзование", R.drawable.education,0 ))
+                arrayCategoryOperations.add(CategoryOperation(7,"Путешествия", R.drawable.travel,0 ))
+                arrayCategoryOperations.add(CategoryOperation(8,"Дом", R.drawable.house,0 ))
+                arrayCategoryOperations.add(CategoryOperation(9,"Автомобиль", R.drawable.car,0 ))
                 val arraySizeCategoryOperationsItems = arrayCategoryOperations.size -1
                 for(i in 0..arraySizeCategoryOperationsItems) {
                     viewModelMain.addCategoryOperation(arrayCategoryOperations[i])

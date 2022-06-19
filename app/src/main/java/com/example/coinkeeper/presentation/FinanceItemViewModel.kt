@@ -56,7 +56,7 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         inputName: String?,
         inputCount: String?,
         inputComment: String?,
-        inputTypeOperation: String?,
+        inputTypeOperation: String,
         inputDate: String?,
         inputCategoryId: String?,
     ) {
@@ -85,15 +85,16 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     }
 
 
-    fun editFinanceItem(inputName: String?, inputCount: String?, inputComment: String?){
+    fun editFinanceItem(inputName: String?, inputCount: String?, inputComment: String?, inputCategoryId: String?){
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         val comment = parseComment(inputComment)
+        val categoryOperationId = parseIdCategory(inputCategoryId)
         val fieldsIsValid = validateInput(name, count)
         if (fieldsIsValid){
             _financeItem.value?.let {// Если объект не равен null
                 viewModelScope.launch {
-                    val item = it.copy(name = name, sum = count, comment = comment)
+                    val item = it.copy(name = name, sum = count, comment = comment, categoryOperationId = categoryOperationId)
                     editItemUseCase.editItem(item)
                     finishWork()
                 }
