@@ -4,4 +4,5 @@ class UpdateAccountBalance(private val financeItemRepository: FinanceItemReposit
     suspend fun updateBalance(id: Int, sum: Int){
         financeItemRepository.updateAccountBalance(id, sum)
     }
+
 }

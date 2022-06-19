@@ -98,9 +98,6 @@ class FinanceItemFragment :
             })
     }
 
-
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addTextChangeListener()

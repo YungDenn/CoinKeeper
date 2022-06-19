@@ -52,9 +52,8 @@ interface FinanceListDao {
     @Insert (onConflict =  OnConflictStrategy.REPLACE)
     suspend fun addAccount(accountDbModel: AccountDbModel)
 
-    @Query("UPDATE accounts set sum =:sumNew where id =:idAccount ")
+    @Query("UPDATE accounts set sum =sum+:sumNew where id =:idAccount ")
     fun updateAccountBalance(idAccount: Int, sumNew: Int)
-
 
     @Query("SELECT sum FROM accounts WHERE id=:idAccount LIMIT 1")
     fun getAccountBalance(idAccount: Int): LiveData<Int>

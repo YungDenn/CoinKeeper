@@ -17,6 +17,7 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     private val editItemUseCase = EditFinanceItemUseCase(repository)
     private val operationListUseCase = GetCategoryOperationListUseCase(repository)
     private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
+    private val updateAccountBalance = UpdateAccountBalance(repository)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -71,7 +72,12 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
             viewModelScope.launch {
                 val financeItem = FinanceItem(0, name,  comment, sum,  typeOperation, date, categoryId )
                 addFinanceItemUseCase.addItem(financeItem)
-                _balance.value = sum
+                if (typeOperation == 1) {
+                    updateAccountBalance.updateBalance(1, sum)
+                }
+                else{
+                    updateAccountBalance.updateBalance(1, -sum)
+                }
                 finishWork()
             }
         }
