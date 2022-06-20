@@ -3,7 +3,6 @@
     <string-array name="spinner_items">
         <item>Отношение трат к доходам</item>
         <item>Доходы по категориям</item>
-        <item>Доходы по категориям</item>
         <item>Расходы по категориям</item>
     </string-array>
 
