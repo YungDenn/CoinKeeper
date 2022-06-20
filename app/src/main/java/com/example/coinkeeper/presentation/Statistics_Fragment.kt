@@ -84,12 +84,9 @@ class Statistics_Fragment : Fragment() {
                         setupPieChartAll()
                     }
                     1 -> {
-                        setupBarChart()
-                    }
-                    2 -> {
                         setupPieChartCategoryAdd()
                     }
-                    3 ->{
+                    2 ->{
                         setupPieChartCategoryExpense()
                     }
                 }

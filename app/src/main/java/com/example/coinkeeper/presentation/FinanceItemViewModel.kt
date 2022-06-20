@@ -17,6 +17,7 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     private val editItemUseCase = EditFinanceItemUseCase(repository)
     private val operationListUseCase = GetCategoryOperationListUseCase(repository)
     private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
+    private val updateAccountBalance = UpdateAccountBalance(repository)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -55,7 +56,7 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         inputName: String?,
         inputCount: String?,
         inputComment: String?,
-        inputTypeOperation: String?,
+        inputTypeOperation: String,
         inputDate: String?,
         inputCategoryId: String?,
     ) {
@@ -71,7 +72,12 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
             viewModelScope.launch {
                 val financeItem = FinanceItem(0, name,  comment, sum,  typeOperation, date, categoryId )
                 addFinanceItemUseCase.addItem(financeItem)
-                _balance.value = sum
+                if (typeOperation == 1) {
+                    updateAccountBalance.updateBalance(1, sum)
+                }
+                else{
+                    updateAccountBalance.updateBalance(1, -sum)
+                }
                 finishWork()
             }
         }
@@ -79,15 +85,16 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     }
 
 
-    fun editFinanceItem(inputName: String?, inputCount: String?, inputComment: String?){
+    fun editFinanceItem(inputName: String?, inputCount: String?, inputComment: String?, inputCategoryId: String?){
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         val comment = parseComment(inputComment)
+        val categoryOperationId = parseIdCategory(inputCategoryId)
         val fieldsIsValid = validateInput(name, count)
         if (fieldsIsValid){
             _financeItem.value?.let {// Если объект не равен null
                 viewModelScope.launch {
-                    val item = it.copy(name = name, sum = count, comment = comment)
+                    val item = it.copy(name = name, sum = count, comment = comment, categoryOperationId = categoryOperationId)
                     editItemUseCase.editItem(item)
                     finishWork()
                 }
