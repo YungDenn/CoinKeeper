@@ -86,7 +86,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
     private fun setupBalance() {
         val tvBalance = binding.tvBalance
-        viewModelMain.accountBalance.observe(this) {
+        viewModelMain.accountBalance.observe(viewLifecycleOwner) {
             tvBalance.text = it.toString()
         }
     }
@@ -180,7 +180,7 @@ class Add_Fragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 arrayCategoryOperations.add(CategoryOperation(3,"Инвестиции", R.drawable.dividend,1 ))
                 arrayCategoryOperations.add(CategoryOperation(4,"Магазины", R.drawable.store,0 ))
                 arrayCategoryOperations.add(CategoryOperation(5,"Медицина", R.drawable.medicine,0 ))
-                arrayCategoryOperations.add(CategoryOperation(6,"Оброзование", R.drawable.education,0 ))
+                arrayCategoryOperations.add(CategoryOperation(6,"Образование", R.drawable.education,0 ))
                 arrayCategoryOperations.add(CategoryOperation(7,"Путешествия", R.drawable.travel,0 ))
                 arrayCategoryOperations.add(CategoryOperation(8,"Дом", R.drawable.house,0 ))
                 arrayCategoryOperations.add(CategoryOperation(9,"Автомобиль", R.drawable.car,0 ))
