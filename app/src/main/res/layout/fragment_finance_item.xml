@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.coinkeeper.presentation.FinanceItemViewModel" />
+            type="com.example.coinkeeper.presentation.viewmodels.FinanceItemViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

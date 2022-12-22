@@ -3,7 +3,7 @@ package com.example.coinkeeper.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
-import com.example.coinkeeper.domain.FinanceItem
+import com.example.coinkeeper.domain.entity.FinanceItem
 
 class CombinedLiveData<CategoryOperations, FinanceItems, Int>
     (source1: LiveData<CategoryOperations>, source2: LiveData<FinanceItems>,

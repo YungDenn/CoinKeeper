@@ -15,11 +15,13 @@ import android.widget.*
 import androidx.lifecycle.ViewModelProvider
 import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FragmentFinanceItemBinding
-import com.example.coinkeeper.domain.FinanceItem
+import com.example.coinkeeper.domain.entity.FinanceItem
 import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 import java.util.*
-import com.example.coinkeeper.domain.CategoryOperation
+import com.example.coinkeeper.domain.entity.CategoryOperation
+import com.example.coinkeeper.presentation.adapters.SpinnerAdapter
+import com.example.coinkeeper.presentation.viewmodels.FinanceItemViewModel
 
 
 class FinanceItemFragment :
@@ -115,7 +117,7 @@ class FinanceItemFragment :
 
     private fun getCategoryOperationList(typeOperation: Int, selectedItem: Int = 0) {
         viewModel = ViewModelProvider(this)[FinanceItemViewModel::class.java]
-        viewModel.getCategoryOperationByType(typeOperation).observe(this) {
+        viewModel.getCategoryOperationByType(typeOperation).observe(requireActivity()) {
             initSpinner(spinner, it, selectedItem)
         }
 
