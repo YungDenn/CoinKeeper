@@ -1,10 +1,9 @@
 package com.example.coinkeeper.data.repository
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.example.coinkeeper.data.database.AppDatabase
+import com.example.coinkeeper.data.database.FinanceListDao
 import com.example.coinkeeper.data.mapper.FinanceListMapper
 import com.example.coinkeeper.domain.entity.Account
 import com.example.coinkeeper.domain.entity.CategoryOperation
@@ -13,12 +12,16 @@ import com.example.coinkeeper.domain.repository.FinanceItemRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class FinanceItemListRepositoryImpl(application: Application) : FinanceItemRepository {
+class FinanceItemListRepositoryImpl @Inject constructor(
+    private val financeListDao: FinanceListDao,
+    private val mapper: FinanceListMapper
+) : FinanceItemRepository {
 
-    private val financeListDao = AppDatabase.getInstance(application).financeListDao()
-    private val mapper = FinanceListMapper()
+//    private val financeListDao = AppDatabase.getInstance(application).financeListDao()
+//    private val mapper = FinanceListMapper()
 
     private val balanceLD = MutableLiveData<Int>()
     private var balance: Int = 0

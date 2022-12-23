@@ -6,8 +6,9 @@ import com.example.coinkeeper.data.database.FinanceItemDbModel
 import com.example.coinkeeper.domain.entity.Account
 import com.example.coinkeeper.domain.entity.CategoryOperation
 import com.example.coinkeeper.domain.entity.FinanceItem
+import javax.inject.Inject
 
-class FinanceListMapper {
+class FinanceListMapper @Inject constructor() {
 
 
     //Finance Item

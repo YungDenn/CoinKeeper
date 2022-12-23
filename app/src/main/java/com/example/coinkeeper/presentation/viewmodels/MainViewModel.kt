@@ -1,31 +1,46 @@
 package com.example.coinkeeper.presentation.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.*
-import com.example.coinkeeper.data.repository.FinanceItemListRepositoryImpl
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.coinkeeper.domain.entity.Account
 import com.example.coinkeeper.domain.entity.CategoryOperation
 import com.example.coinkeeper.domain.entity.FinanceItem
 import com.example.coinkeeper.domain.usecases.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel @Inject constructor(
+    private val getFinanceListUseCase: GetFinanceItemListUseCase,
+    private val deleteFinanceItemUseCase: DeleteFinanceItemUseCase,
+    private val getFinanceBalanceUseCase: GetFinanceBalanceUseCase,
+    private val addFinanceItemUseCase: AddFinanceItemUseCase,
+    private val addCategoryOperationUseCase: AddCategoryOperationUseCase,
+    private val getFinanceListByTypeOperationUseCase:
+        GetFinanceListByTypeOperationUseCase,
+    private val getCategoryOperationByTypeUseCase : GetCategoryOperationByTypeUseCase,
+    private val getFinanceListByCategoryOperationUseCase :
+        GetFinanceListByCategoryOperationUseCase,
+    private val getAccountBalanceUseCase : GetAccountBalanceUseCase,
+    private val addAccountUseCase : AddAccountUseCase,
+    private val updateAccountBalanceUseCase: UpdateAccountBalanceUseCase
+) : ViewModel() {
 
-    private val repository = FinanceItemListRepositoryImpl(application)
+//    private val repository = FinanceItemListRepositoryImpl(application)
 
-    private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
-    private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
-    private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
-    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
-    private val addCategoryOperationUseCase = AddCategoryOperationUseCase(repository)
-    private val getFinanceListByTypeOperationUseCase =
-        GetFinanceListByTypeOperationUseCase(repository)
-    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
-    private val getFinanceListByCategoryOperationUseCase =
-        GetFinanceListByCategoryOperationUseCase(repository)
-    private val getAccountBalanceUseCase = GetAccountBalanceUseCase(repository)
-    private val addAccountUseCase = AddAccountUseCase(repository)
-    private val updateAccountBalanceUseCase = UpdateAccountBalanceUseCase(repository)
+    //    private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
+//    private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
+//    private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
+//    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
+//    private val addCategoryOperationUseCase = AddCategoryOperationUseCase(repository)
+//    private val getFinanceListByTypeOperationUseCase =
+//        GetFinanceListByTypeOperationUseCase(repository)
+//    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
+//    private val getFinanceListByCategoryOperationUseCase =
+//        GetFinanceListByCategoryOperationUseCase(repository)
+//    private val getAccountBalanceUseCase = GetAccountBalanceUseCase(repository)
+//    private val addAccountUseCase = AddAccountUseCase(repository)
+//    private val updateAccountBalanceUseCase = UpdateAccountBalanceUseCase(repository)
 
     val financeList = getFinanceListUseCase.getFinanceList()
     var balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
@@ -44,8 +59,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             if (delete) {
                 updateAccountBalanceUseCase.updateBalance(1, sum)
-            }
-            else{
+            } else {
                 if (typeOperation == 1) {
                     updateAccountBalanceUseCase.updateBalance(1, sum)
                 } else {

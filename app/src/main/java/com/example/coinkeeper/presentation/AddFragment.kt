@@ -1,44 +1,49 @@
 package com.example.coinkeeper.presentation
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FragmentAddBinding
-import com.example.coinkeeper.domain.entity.FinanceItem
-import java.lang.RuntimeException
-import android.preference.PreferenceManager
-import android.widget.Toast
 import com.example.coinkeeper.domain.entity.Account
 import com.example.coinkeeper.domain.entity.CategoryOperation
+import com.example.coinkeeper.domain.entity.FinanceItem
 import com.example.coinkeeper.presentation.adapters.FinanceListAdapter
 import com.example.coinkeeper.presentation.viewmodels.MainViewModel
+import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
+import javax.inject.Inject
 
 class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
-
 
     private lateinit var financeListAdapter: FinanceListAdapter
 
     private lateinit var viewModelMain: MainViewModel
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as CoinKeeperApp).component
+    }
+
     private var _binding: FragmentAddBinding? = null
     private val binding: FragmentAddBinding
-        get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
+        get() = _binding ?: throw RuntimeException("FragmentAddBinding == null")
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModelMain = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModelMain.financeList.observe(this) {
-            financeListAdapter.submitList(it)
-        }
-        firstStart()
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,17 +59,23 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModelMain = ViewModelProvider(this)[MainViewModel::class.java]
-        viewModelMain.financeList.observe(this) {
-            financeListAdapter.submitList(it)
-        }
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        viewModelMain = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+//        firstStart()
+//        viewModelMain.financeList.observe(this) {
+//            financeListAdapter.submitList(it)
+//        }
+//    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModelMain = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+        firstStart()
+        viewModelMain.financeList.observe(viewLifecycleOwner) {
+            financeListAdapter.submitList(it)
+        }
         binding.viewModel = viewModelMain
         binding.lifecycleOwner = viewLifecycleOwner
         with(binding) {
@@ -154,8 +165,8 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     }
 
     private fun firstStart(){
-        PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
-            if (!getBoolean("firstStart", false)){
+//        PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
+//            if (!getBoolean("firstStart", false)){
                 val account = Account(0, "Основной", 0)
                 viewModelMain.addAccount(account)
 
@@ -191,14 +202,16 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 }
                 //account = Account(0, "Основной", 35000)
                 //viewModelMain.addAccount(account)
-            }
-        }
+//            }
+//            else{
+//                Toast.makeText(requireContext(), "SecondLaunch", Toast.LENGTH_SHORT).show()
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-
     }
 
 }
