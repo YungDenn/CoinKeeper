@@ -1,37 +1,43 @@
 package com.example.coinkeeper.presentation
 
+import android.R
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.core.view.isGone
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.coinkeeper.databinding.FragmentStatisticsBinding
-import com.github.mikephil.charting.charts.PieChart
-import java.lang.RuntimeException
+import com.example.coinkeeper.presentation.viewmodels.MainViewModel
+import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.XAxis.XAxisPosition
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
-import android.R
-import android.annotation.SuppressLint
-
-import android.widget.ArrayAdapter
-
-import android.widget.Spinner
-import android.widget.AdapterView
-import androidx.lifecycle.ViewModelProvider
-import com.example.coinkeeper.presentation.viewmodels.MainViewModel
-import kotlinx.android.synthetic.main.fragment_statistics_.*
+import javax.inject.Inject
 
 
-class StatisticsFragment : Fragment() {
+class StatisticsFragment () : Fragment() {
 
-    private lateinit var viewModelMain: MainViewModel
+    private  lateinit var viewModelMain: MainViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as CoinKeeperApp).component
+    }
+
     private lateinit var pieChartAll: PieChart
     private lateinit var pieChartCategoryAdd: PieChart
     private lateinit var pieChartCategoryExpense: PieChart
@@ -40,17 +46,25 @@ class StatisticsFragment : Fragment() {
     private lateinit var adapter: ArrayAdapter<*>
     private lateinit var legend: com.github.mikephil.charting.components.Legend
 
+
+
+
     private var _binding: FragmentStatisticsBinding? = null
     private val binding: FragmentStatisticsBinding
         get() = _binding ?: throw RuntimeException("FragmentAddBinding == null")
 
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
-        viewModelMain = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModelMain = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         pieChartCategoryAdd = binding.pieChartCategoryAdd
         pieChartCategoryExpense = binding.pieChartCategoryExpense
@@ -60,7 +74,6 @@ class StatisticsFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("ResourceType")
     private fun setupSpinner() {
         spinner = binding.spinner2
         adapter = ArrayAdapter.createFromResource(

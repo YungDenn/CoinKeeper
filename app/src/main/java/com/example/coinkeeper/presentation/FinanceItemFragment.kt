@@ -22,6 +22,8 @@ import java.util.*
 import com.example.coinkeeper.domain.entity.CategoryOperation
 import com.example.coinkeeper.presentation.adapters.SpinnerAdapter
 import com.example.coinkeeper.presentation.viewmodels.FinanceItemViewModel
+import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
+import javax.inject.Inject
 
 
 class FinanceItemFragment :
@@ -32,6 +34,14 @@ class FinanceItemFragment :
     private lateinit var viewModel: FinanceItemViewModel
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
     private lateinit var spinnerAdapter: SpinnerAdapter
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+
+    private val component by lazy {
+        (requireActivity().application as CoinKeeperApp).component
+    }
 
     private var _binding: FragmentFinanceItemBinding? = null
     private val binding: FragmentFinanceItemBinding
@@ -58,6 +68,7 @@ class FinanceItemFragment :
 
 
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
@@ -105,7 +116,7 @@ class FinanceItemFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addTextChangeListener()
-        viewModel = ViewModelProvider(this)[FinanceItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[FinanceItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         spinner = binding.spinner

@@ -1,25 +1,35 @@
 package com.example.coinkeeper.presentation.viewmodels
 
 
-import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.coinkeeper.data.repository.FinanceItemListRepositoryImpl
 import com.example.coinkeeper.domain.entity.CategoryOperation
 import com.example.coinkeeper.domain.entity.FinanceItem
 import com.example.coinkeeper.domain.usecases.*
 import kotlinx.coroutines.launch
-import java.lang.Exception
+import javax.inject.Inject
 
-class FinanceItemViewModel(application: Application): AndroidViewModel(application) {
+class FinanceItemViewModel @Inject constructor(
+    private val repository: FinanceItemListRepositoryImpl,
+    private val getItemUseCase: GetFinanceItemUseCase,
+    private val addFinanceItemUseCase: AddFinanceItemUseCase,
+    private val editItemUseCase: EditFinanceItemUseCase,
+    private val operationListUseCase: GetCategoryOperationListUseCase,
+    private val getCategoryOperationByTypeUseCase: GetCategoryOperationByTypeUseCase,
+    private val updateAccountBalanceUseCase: UpdateAccountBalanceUseCase,
+    ) :ViewModel() {
 
-    private val repository = FinanceItemListRepositoryImpl(application)
+    //val repository = FinanceItemListRepositoryImpl(application)
 
-    private val getItemUseCase = GetFinanceItemUseCase(repository)
-    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
-    private val editItemUseCase = EditFinanceItemUseCase(repository)
-    private val operationListUseCase = GetCategoryOperationListUseCase(repository)
-    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
-    private val updateAccountBalanceUseCase = UpdateAccountBalanceUseCase(repository)
+//    private val getItemUseCase = GetFinanceItemUseCase(repository)
+//    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
+//    private val editItemUseCase = EditFinanceItemUseCase(repository)
+//    private val operationListUseCase = GetCategoryOperationListUseCase(repository)
+//    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
+//    private val updateAccountBalanceUseCase = UpdateAccountBalanceUseCase(repository)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -43,12 +53,13 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         get() = _closeScreen
 
 
-    fun getFinanceItem(FinanceItemId: Int){
+    fun getFinanceItem(FinanceItemId: Int) {
         viewModelScope.launch {
             val item = getItemUseCase.getItem(FinanceItemId)
             _financeItem.value = item
         }
     }
+
     fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>> {
         return getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
     }
@@ -70,14 +81,14 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         val date = parseDate(inputDate)
         val categoryId = parseIdCategory(inputCategoryId)
         val fieldsIsValid = validateInput(name, sum)
-        if (fieldsIsValid){
+        if (fieldsIsValid) {
             viewModelScope.launch {
-                val financeItem = FinanceItem(0, name,  comment, sum,  typeOperation, date, categoryId )
+                val financeItem =
+                    FinanceItem(0, name, comment, sum, typeOperation, date, categoryId)
                 addFinanceItemUseCase.addItem(financeItem)
                 if (typeOperation == 1) {
                     updateAccountBalanceUseCase.updateBalance(1, sum)
-                }
-                else{
+                } else {
                     updateAccountBalanceUseCase.updateBalance(1, -sum)
                 }
                 finishWork()
@@ -87,16 +98,26 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
     }
 
 
-    fun editFinanceItem(inputName: String?, inputCount: String?, inputComment: String?, inputCategoryId: String?){
+    fun editFinanceItem(
+        inputName: String?,
+        inputCount: String?,
+        inputComment: String?,
+        inputCategoryId: String?
+    ) {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         val comment = parseComment(inputComment)
         val categoryOperationId = parseIdCategory(inputCategoryId)
         val fieldsIsValid = validateInput(name, count)
-        if (fieldsIsValid){
+        if (fieldsIsValid) {
             _financeItem.value?.let {// Если объект не равен null
                 viewModelScope.launch {
-                    val item = it.copy(name = name, sum = count, comment = comment, categoryOperationId = categoryOperationId)
+                    val item = it.copy(
+                        name = name,
+                        sum = count,
+                        comment = comment,
+                        categoryOperationId = categoryOperationId
+                    )
                     editItemUseCase.editItem(item)
                     finishWork()
                 }
@@ -105,61 +126,66 @@ class FinanceItemViewModel(application: Application): AndroidViewModel(applicati
         }
     }
 
-    private fun parseName(inputName: String?): String{
+    private fun parseName(inputName: String?): String {
         return inputName?.trim() ?: ""
         // Если inputName не равен null, тогда обрезать пробелы (.trim())
         // иначе вернуть пустую строку ""
     }
-    private fun parseComment(inputComment: String?): String{
+
+    private fun parseComment(inputComment: String?): String {
         return inputComment?.trim() ?: ""
     }
 
-    private fun parseCount(inputCount: String?) : Int {
+    private fun parseCount(inputCount: String?): Int {
         return try {
             inputCount?.trim()?.toInt() ?: 0
         } catch (e: Exception) {
             0
         }
     }
-    private fun parseTypeOperation(inputType: String?) : Int {
+
+    private fun parseTypeOperation(inputType: String?): Int {
         return try {
             inputType?.trim()?.toInt() ?: 0
         } catch (e: Exception) {
             0
         }
     }
-    private fun parseDate(inputDate: String?) : String {
+
+    private fun parseDate(inputDate: String?): String {
         return inputDate?.trim() ?: ""
     }
-    private fun parseIdCategory(inputCategoryId: String?) : Int {
+
+    private fun parseIdCategory(inputCategoryId: String?): Int {
         return try {
             inputCategoryId?.trim()?.toInt() ?: 0
         } catch (e: Exception) {
             0
         }
     }
-    private fun validateInput(name: String, count: Int): Boolean{
+
+    private fun validateInput(name: String, count: Int): Boolean {
         var result = true
-        if (name.isBlank()){
+        if (name.isBlank()) {
             _errorInputName.value = true
             result = false
         }
-        if (count <= 0){
+        if (count <= 0) {
             _errorInputCount.value = true
             result = false
         }
-        return  result
+        return result
     }
 
-    fun resetErrorInputName(){
+    fun resetErrorInputName() {
         _errorInputName.value = false
     }
 
-    fun resetErrorInputCount(){
+    fun resetErrorInputCount() {
         _errorInputCount.value = false
     }
 
-    private fun finishWork(){
+    private fun finishWork() {
         _closeScreen.value = Unit
     }
 }
