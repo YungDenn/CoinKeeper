@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.coinkeeper.presentation.AddFragment
 import com.example.coinkeeper.presentation.CoinKeeperApp
 import com.example.coinkeeper.presentation.FinanceItemFragment
+import com.example.coinkeeper.presentation.StatisticsFragment
 import dagger.BindsInstance
 import dagger.Component
 
@@ -17,6 +18,7 @@ interface ApplicationComponent {
 
     fun inject (fragment: FinanceItemFragment)
 
+    fun inject(fragment: StatisticsFragment)
 
     @Component.Factory
     interface Factory{

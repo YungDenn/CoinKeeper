@@ -72,7 +72,9 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModelMain = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
-        firstStart()
+
+        //firstStart()
+
         viewModelMain.financeList.observe(viewLifecycleOwner) {
             financeListAdapter.submitList(it)
         }
@@ -206,8 +208,6 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 //            else{
 //                Toast.makeText(requireContext(), "SecondLaunch", Toast.LENGTH_SHORT).show()
     }
-
-
 
     override fun onDestroy() {
         super.onDestroy()
