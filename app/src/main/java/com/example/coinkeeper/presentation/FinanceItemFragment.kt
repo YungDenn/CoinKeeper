@@ -195,7 +195,6 @@ class FinanceItemFragment :
                 binding.etDate.text.toString(),
                 position.toString()
             )
-
         }
     }
 
@@ -249,7 +248,6 @@ class FinanceItemFragment :
             OPERATION_EXPENSE -> typeOperation = 0
             OPERATION_INCOME -> typeOperation = 1
         }
-
     }
 
 

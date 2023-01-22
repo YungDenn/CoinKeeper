@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.15" />
+            app:layout_constraintGuide_percent="0.2" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvFinanceItem"
@@ -60,38 +60,59 @@
             tools:ignore="SpeakableTextPresentCheck" />
 
         <androidx.cardview.widget.CardView
-            android:layout_width="210dp"
-            android:layout_height="45dp"
-            app:cardBackgroundColor="#80DEEA"
-            app:cardCornerRadius="15dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="75dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="#85B95C"
+            app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <TextView
+                android:id="@+id/nameBill"
+                android:layout_width="185dp"
+                android:layout_height="50dp"
+
+                android:gravity="center_horizontal|center_vertical"
+                android:paddingTop="10dp"
+                android:text="Cash"
+                android:textColor="@color/finance_item"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/imTypeBill"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right|center_vertical"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/card" />
 
             <TextView
-                android:id="@+id/tv_Balance"
-                android:layout_width="173dp"
-                android:layout_height="match_parent"
+                android:id="@+id/tvBalance"
+                android:layout_width="185dp"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="0dp"
                 android:gravity="center"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                tools:text="32000" />
+                android:paddingBottom="10dp"
+                android:textColor="@color/finance_item"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nameBill"
+                tools:text="10000$" />
 
-            <TextView
-                android:id="@+id/tvLabel"
-                android:layout_width="125dp"
-                android:layout_height="match_parent"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:text="Баланс:  "
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

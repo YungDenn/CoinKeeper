@@ -122,7 +122,6 @@ class FinanceItemViewModel @Inject constructor(
                     finishWork()
                 }
             }
-
         }
     }
 

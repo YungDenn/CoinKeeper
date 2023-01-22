@@ -1,19 +1,19 @@
 package com.example.coinkeeper.presentation.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.example.coinkeeper.R
-import com.example.coinkeeper.domain.entity.FinanceItem
 import androidx.recyclerview.widget.ListAdapter
+import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FinanceItemExpenceBinding
 import com.example.coinkeeper.databinding.FinanceItemIncomeBinding
+import com.example.coinkeeper.domain.entity.FinanceItem
 import com.example.coinkeeper.presentation.FinanceItemViewHolder
 
 
-class FinanceListAdapter :
-    ListAdapter<FinanceItem, FinanceItemViewHolder>(FinanceItemDiffCallback()) {
+class FinanceListAdapter : ListAdapter<FinanceItem, FinanceItemViewHolder>(FinanceItemDiffCallback()) {
 
     var onFinanceItemClickListener: ((FinanceItem) -> Unit)? = null
 
@@ -42,12 +42,21 @@ class FinanceListAdapter :
         when(binding){
             is FinanceItemExpenceBinding -> {
                 binding.financeItem = financeItem
+                binding.categoryOperation?.id = financeItem.categoryOperationId
+                //binding.imageView.setImageResource(binding.categoryOperation.image_id)
+//                binding.imageView.setImageResource(R.drawable.car)
+                Log.d("FinanceItem",
+                    "ID finance item: ${financeItem.id} ${binding.categoryOperation?.id}")
+
             }
             is FinanceItemIncomeBinding ->{
                 binding.financeItem = financeItem
+//                binding.categoryOperation.id = financeItem.categoryOperationId
+//                binding.imageView.setImageResource(binding.categoryOperation.image_id)
             }
         }
     }
+
 
 
     override fun getItemViewType(position: Int): Int {

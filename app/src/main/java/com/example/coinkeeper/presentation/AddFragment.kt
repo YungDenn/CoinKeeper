@@ -131,6 +131,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         }
     }
 
+
     private fun setupSwipeListener(rvFinanceList: RecyclerView) {
         val callback = object : ItemTouchHelper.SimpleCallback(
             0,
@@ -184,8 +185,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 arrayFinanceItems.add(FinanceItem(0, "Покупки в магазине", "", 3500, 0, "", 4))
                 arrayFinanceItems.add(FinanceItem(0, "Покупка билетов", "", 7500, 0, "", 7))
                 arrayFinanceItems.add(FinanceItem(0, "ТО Авто", "", 10500, 0, "", 4))
-                val arraySizeFinanceItems = arrayFinanceItems.size -1
-                for(i in 0..arraySizeFinanceItems) {
+                for(i in 0 until arrayFinanceItems.size) {
                     viewModelMain.addFinanceItem(arrayFinanceItems[i])
                 }
                 val arrayCategoryOperations: ArrayList<CategoryOperation> = ArrayList()
@@ -198,8 +198,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 arrayCategoryOperations.add(CategoryOperation(7,"Путешествия", R.drawable.travel,0 ))
                 arrayCategoryOperations.add(CategoryOperation(8,"Дом", R.drawable.house,0 ))
                 arrayCategoryOperations.add(CategoryOperation(9,"Автомобиль", R.drawable.car,0 ))
-                val arraySizeCategoryOperationsItems = arrayCategoryOperations.size -1
-                for(i in 0..arraySizeCategoryOperationsItems) {
+                for(i in 0 until arrayCategoryOperations.size) {
                     viewModelMain.addCategoryOperation(arrayCategoryOperations[i])
                 }
                 //account = Account(0, "Основной", 35000)

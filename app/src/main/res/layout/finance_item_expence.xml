@@ -1,65 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
         <variable
             name="financeItem"
             type="com.example.coinkeeper.domain.entity.FinanceItem" />
-    </data>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="2dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
 
-    <LinearLayout
+        <variable
+            name="categoryOperation"
+            type="com.example.coinkeeper.domain.entity.CategoryOperation" />
+    </data>
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/expense_finance_item"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="2dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true">
 
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@{financeItem.name}"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:ignore="TextContrastCheck"
-            tools:text="Снятие с карты" />
+            android:background="@color/finance_item"
+            android:orientation="horizontal"
+            android:padding="10dp">
 
-        <TextView
-            android:id="@+id/tv_minus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="-"
-            android:textAlignment="viewEnd"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingStart="5dp"
+                android:src="@drawable/store"
 
-        <TextView
-            android:id="@+id/tv_sum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="@{String.valueOf(financeItem.sum)}"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:ignore="TextContrastCheck"
-            tools:text="1500" />
+                />
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                app:srcCompat="@drawable/ic_baseline_circle_red_24" />
 
-</androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="220dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@{financeItem.name}"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                tools:ignore="TextContrastCheck"
+                tools:text="Снятие с карты" />
+
+            <TextView
+                android:id="@+id/tv_minus"
+                android:layout_width="15dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical|end"
+                android:text="-"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_sum"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@{String.valueOf(financeItem.sum)}"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textIsSelectable="false"
+                android:textSize="16sp"
+                tools:ignore="TextContrastCheck"
+                tools:text="1500" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 </layout>
