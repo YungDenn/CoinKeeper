@@ -1,6 +1,5 @@
 package com.example.coinkeeper.presentation.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -35,6 +34,7 @@ class FinanceListAdapter : ListAdapter<FinanceItem, FinanceItemViewHolder>(Finan
 
     override fun onBindViewHolder(viewHolder: FinanceItemViewHolder, position: Int) {
         val financeItem = getItem(position)
+        val imageId = financeItem.imageId
         val binding = viewHolder.binding
         binding.root.setOnClickListener {
             onFinanceItemClickListener?.invoke(financeItem)
@@ -42,17 +42,11 @@ class FinanceListAdapter : ListAdapter<FinanceItem, FinanceItemViewHolder>(Finan
         when(binding){
             is FinanceItemExpenceBinding -> {
                 binding.financeItem = financeItem
-                binding.categoryOperation?.id = financeItem.categoryOperationId
-                //binding.imageView.setImageResource(binding.categoryOperation.image_id)
-//                binding.imageView.setImageResource(R.drawable.car)
-                Log.d("FinanceItem",
-                    "ID finance item: ${financeItem.id} ${binding.categoryOperation?.id}")
-
+                binding.imageView.setImageResource(imageId)
             }
             is FinanceItemIncomeBinding ->{
                 binding.financeItem = financeItem
-//                binding.categoryOperation.id = financeItem.categoryOperationId
-//                binding.imageView.setImageResource(binding.categoryOperation.image_id)
+                binding.imageView.setImageResource(imageId)
             }
         }
     }

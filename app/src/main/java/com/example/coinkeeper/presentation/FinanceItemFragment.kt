@@ -23,6 +23,7 @@ import com.example.coinkeeper.domain.entity.CategoryOperation
 import com.example.coinkeeper.presentation.adapters.SpinnerAdapter
 import com.example.coinkeeper.presentation.viewmodels.FinanceItemViewModel
 import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
@@ -43,6 +44,9 @@ class FinanceItemFragment :
         (requireActivity().application as CoinKeeperApp).component
     }
 
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+
     private var _binding: FragmentFinanceItemBinding? = null
     private val binding: FragmentFinanceItemBinding
         get() = _binding ?: throw RuntimeException("FragmentFinanceItemBinding == null")
@@ -53,6 +57,7 @@ class FinanceItemFragment :
     private var financeItemId: Int = FinanceItem.ID
     private var typeOperation: Int = 0
     private lateinit var spinner: Spinner
+    private lateinit var categoryOperation: CategoryOperation
 
     private var day: Int = 0
     private var month: Int = 0
@@ -86,6 +91,14 @@ class FinanceItemFragment :
         parseParams()
         return binding.root
     }
+
+    private fun getCategoryOperation(categoryOperationId: Int) {
+        viewModel.getCategoryOperationsById(categoryOperationId)
+        viewModel.categoryOperation.observe(viewLifecycleOwner) {
+            categoryOperation = it
+        }
+    }
+
 
     private fun initSpinner(
         spinner: Spinner,
@@ -131,7 +144,6 @@ class FinanceItemFragment :
         viewModel.getCategoryOperationByType(typeOperation).observe(requireActivity()) {
             initSpinner(spinner, it, selectedItem)
         }
-
     }
 
 
@@ -155,22 +167,25 @@ class FinanceItemFragment :
             } else {
                 getCategoryOperationList(typeOperation, it.categoryOperationId - 4)
             }
+            getCategoryOperation(it.categoryOperationId)
             //getCategoryOperationList(typeOperation)
         }
 
         binding.saveButton.setOnClickListener {
             var position = binding.spinner.selectedItemPosition
-            if (typeOperation == 1){
-                position += 1
+            position += if (typeOperation == 1) {
+                1
+            } else {
+                4
             }
-            else{
-                position += 4
-            }
+
+            getCategoryOperation(position)
             viewModel.editFinanceItem(
                 binding.etName.text?.toString(),
                 binding.etCount.text?.toString(),
                 binding.etComment.text?.toString(),
-                position.toString()
+                position.toString(),
+                categoryOperation.image_id.toString()
             )
         }
     }
@@ -181,20 +196,24 @@ class FinanceItemFragment :
 
         binding.saveButton.setOnClickListener {
             var position = binding.spinner.selectedItemPosition
-            if (typeOperation == 1){
-                position += 1
+            position += if (typeOperation == 1) {
+                1
+            } else {
+                4
             }
-            else{
-                position += 4
+            coroutineScope.launch {
+                getCategoryOperation(position)
+                delay(10)
+                viewModel.addFinanceItem(
+                    binding.etName.text?.toString(),
+                    binding.etCount.text?.toString(),
+                    binding.etComment.text?.toString(),
+                    typeOperation.toString(),
+                    binding.etDate.text.toString(),
+                    position.toString(),
+                    categoryOperation.image_id.toString()
+                )
             }
-            viewModel.addFinanceItem(
-                binding.etName.text?.toString(),
-                binding.etCount.text?.toString(),
-                binding.etComment.text?.toString(),
-                typeOperation.toString(),
-                binding.etDate.text.toString(),
-                position.toString()
-            )
         }
     }
 

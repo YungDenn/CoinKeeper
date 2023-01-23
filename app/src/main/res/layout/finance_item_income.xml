@@ -8,13 +8,6 @@
             name="financeItem"
             type="com.example.coinkeeper.domain.entity.FinanceItem" />
 
-        <variable
-            name="categoryOperation"
-            type="com.example.coinkeeper.domain.entity.CategoryOperation" />
-
-        <variable
-            name="imageId"
-            type="com.example.coinkeeper.domain.entity.CategoryOperation" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -40,7 +33,6 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:paddingStart="5dp"
-                android:src="@drawable/store"
                 />
 
             <ImageView

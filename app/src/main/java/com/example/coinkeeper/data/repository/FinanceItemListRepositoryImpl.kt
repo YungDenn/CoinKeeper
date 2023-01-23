@@ -26,18 +26,6 @@ class FinanceItemListRepositoryImpl @Inject constructor(
     private val balanceLD = MutableLiveData<Int>()
     private var balance: Int = 0
 
-
-//    private fun updateBalance(sum: Int, type: Int) {
-//        CoroutineScope(Dispatchers.Main).launch {
-//            if (type == 1) {
-//                balance += sum
-//            } else {
-//                balance -= sum
-//            }
-//            balanceLD.value = balance
-//        }
-//    }
-
     override fun getFinanceBalance(): MutableLiveData<Int> {
         return balanceLD
     }
