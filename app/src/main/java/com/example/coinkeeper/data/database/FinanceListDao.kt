@@ -46,6 +46,9 @@ interface FinanceListDao {
     @Query("SELECT * FROM finance_items WHERE category_operations_id=:typeOperation")
     fun getFinanceListByCategoryOperation(typeOperation: Int): LiveData<List<FinanceItemDbModel>>
 
+    @Query("SELECT id FROM category_operations WHERE name=:name")
+    fun getIdCategoryOperationByName(name: String): Int
+
     //Account
 
     @Insert (onConflict =  OnConflictStrategy.REPLACE)

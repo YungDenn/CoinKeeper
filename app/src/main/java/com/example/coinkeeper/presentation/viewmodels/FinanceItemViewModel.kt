@@ -20,10 +20,12 @@ class FinanceItemViewModel @Inject constructor(
     private val operationListUseCase: GetCategoryOperationListUseCase,
     private val getCategoryOperationByTypeUseCase: GetCategoryOperationByTypeUseCase,
     private val updateAccountBalanceUseCase: UpdateAccountBalanceUseCase,
-    private val getCategoryOperationUseCase: GetCategoryOperationUseCase
-    ) :ViewModel() {
+    private val getCategoryOperationUseCase: GetCategoryOperationUseCase,
 
-    //val repository = FinanceItemListRepositoryImpl(application)
+) :ViewModel() {
+
+
+//    val repository = FinanceItemListRepositoryImpl(application)
 
 //    private val getItemUseCase = GetFinanceItemUseCase(repository)
 //    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
@@ -72,6 +74,7 @@ class FinanceItemViewModel @Inject constructor(
         }
     }
 
+
     fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>> {
         return getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
     }
@@ -100,15 +103,9 @@ class FinanceItemViewModel @Inject constructor(
                 val financeItem =
                     FinanceItem(0, name, comment, sum, typeOperation, date, categoryId, imageId)
                 addFinanceItemUseCase.addItem(financeItem)
-                if (typeOperation == 1) {
-                    updateAccountBalanceUseCase.updateBalance(1, sum)
-                } else {
-                    updateAccountBalanceUseCase.updateBalance(1, -sum)
-                }
                 finishWork()
             }
         }
-
     }
 
 
@@ -117,7 +114,8 @@ class FinanceItemViewModel @Inject constructor(
         inputCount: String?,
         inputComment: String?,
         inputCategoryId: String?,
-        inputImageId: String?
+        inputImageId: String?,
+        oldSum: Int
     ) {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
@@ -135,6 +133,12 @@ class FinanceItemViewModel @Inject constructor(
                         categoryOperationId = categoryOperationId,
                         imageId = imageId
                     )
+                    if (item.typeOperation==1) {
+                        updateAccountBalanceUseCase.updateBalance(1, item.sum - oldSum)
+                    }
+                    else{
+                        updateAccountBalanceUseCase.updateBalance(1, oldSum - item.sum)
+                    }
                     editItemUseCase.editItem(item)
                     finishWork()
                 }

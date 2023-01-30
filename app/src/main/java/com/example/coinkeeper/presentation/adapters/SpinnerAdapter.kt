@@ -18,6 +18,9 @@ class SpinnerAdapter(val context: Context, var list: List<CategoryOperation>) :
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
+
+
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View
         val vh: ItemRowHolder
@@ -42,15 +45,11 @@ class SpinnerAdapter(val context: Context, var list: List<CategoryOperation>) :
     }
 
     override fun getItem(position: Int): Any? {
-
         return null
-
     }
 
     override fun getItemId(position: Int): Long {
-
         return 0
-
     }
 
     override fun getCount(): Int {

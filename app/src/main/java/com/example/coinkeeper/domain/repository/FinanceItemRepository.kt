@@ -37,4 +37,6 @@ interface FinanceItemRepository {
     suspend fun updateAccountBalance (id: Int, sum: Int)
 
     fun getAccountBalance(id: Int): LiveData<Int>
+
+    fun getIdCategoryOperationByName(name: String): Int
 }
