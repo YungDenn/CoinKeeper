@@ -19,7 +19,8 @@ class FinanceListMapper @Inject constructor() {
         comment = financeItem.comment,
         typeOperation = financeItem.typeOperation,
         categoryOperationId = financeItem.categoryOperationId,
-        date = financeItem.date
+        date = financeItem.date,
+        imageId = financeItem.imageId
     )
 
     fun mapDbModelToEntity(financeItemDbModel: FinanceItemDbModel) = FinanceItem(
@@ -29,7 +30,8 @@ class FinanceListMapper @Inject constructor() {
         comment = financeItemDbModel.comment,
         typeOperation = financeItemDbModel.typeOperation,
         categoryOperationId = financeItemDbModel.categoryOperationId,
-        date = financeItemDbModel.date
+        date = financeItemDbModel.date,
+        imageId = financeItemDbModel.imageId
     )
 
     fun mapListDbModelToListEntity(list: List<FinanceItemDbModel>) = list.map {

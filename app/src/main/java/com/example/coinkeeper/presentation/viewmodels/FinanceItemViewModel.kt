@@ -20,9 +20,12 @@ class FinanceItemViewModel @Inject constructor(
     private val operationListUseCase: GetCategoryOperationListUseCase,
     private val getCategoryOperationByTypeUseCase: GetCategoryOperationByTypeUseCase,
     private val updateAccountBalanceUseCase: UpdateAccountBalanceUseCase,
-    ) :ViewModel() {
+    private val getCategoryOperationUseCase: GetCategoryOperationUseCase,
 
-    //val repository = FinanceItemListRepositoryImpl(application)
+) :ViewModel() {
+
+
+//    val repository = FinanceItemListRepositoryImpl(application)
 
 //    private val getItemUseCase = GetFinanceItemUseCase(repository)
 //    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
@@ -43,6 +46,10 @@ class FinanceItemViewModel @Inject constructor(
     val financeItem: LiveData<FinanceItem>
         get() = _financeItem
 
+    private val _categoryOperation = MutableLiveData<CategoryOperation>()
+    val categoryOperation: LiveData<CategoryOperation>
+        get() = _categoryOperation
+
     private val _balance = MutableLiveData<Int>()
     val balance: LiveData<Int>
         get() = _balance
@@ -60,6 +67,14 @@ class FinanceItemViewModel @Inject constructor(
         }
     }
 
+    fun getCategoryOperationsById(categoryOperationId: Int){
+        viewModelScope.launch {
+            val item = getCategoryOperationUseCase.getCategoryOperation(categoryOperationId)
+            _categoryOperation.value = item
+        }
+    }
+
+
     fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>> {
         return getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
     }
@@ -72,6 +87,7 @@ class FinanceItemViewModel @Inject constructor(
         inputTypeOperation: String,
         inputDate: String?,
         inputCategoryId: String?,
+        inputImageId:String,
     ) {
 
         val name = parseName(inputName)
@@ -80,21 +96,16 @@ class FinanceItemViewModel @Inject constructor(
         val typeOperation = parseTypeOperation(inputTypeOperation)
         val date = parseDate(inputDate)
         val categoryId = parseIdCategory(inputCategoryId)
+        val imageId = parseIdImage(inputImageId)
         val fieldsIsValid = validateInput(name, sum)
         if (fieldsIsValid) {
             viewModelScope.launch {
                 val financeItem =
-                    FinanceItem(0, name, comment, sum, typeOperation, date, categoryId)
+                    FinanceItem(0, name, comment, sum, typeOperation, date, categoryId, imageId)
                 addFinanceItemUseCase.addItem(financeItem)
-                if (typeOperation == 1) {
-                    updateAccountBalanceUseCase.updateBalance(1, sum)
-                } else {
-                    updateAccountBalanceUseCase.updateBalance(1, -sum)
-                }
                 finishWork()
             }
         }
-
     }
 
 
@@ -102,12 +113,15 @@ class FinanceItemViewModel @Inject constructor(
         inputName: String?,
         inputCount: String?,
         inputComment: String?,
-        inputCategoryId: String?
+        inputCategoryId: String?,
+        inputImageId: String?,
+        oldSum: Int
     ) {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         val comment = parseComment(inputComment)
         val categoryOperationId = parseIdCategory(inputCategoryId)
+        val imageId = parseIdImage(inputImageId)
         val fieldsIsValid = validateInput(name, count)
         if (fieldsIsValid) {
             _financeItem.value?.let {// Если объект не равен null
@@ -116,13 +130,19 @@ class FinanceItemViewModel @Inject constructor(
                         name = name,
                         sum = count,
                         comment = comment,
-                        categoryOperationId = categoryOperationId
+                        categoryOperationId = categoryOperationId,
+                        imageId = imageId
                     )
+                    if (item.typeOperation==1) {
+                        updateAccountBalanceUseCase.updateBalance(1, item.sum - oldSum)
+                    }
+                    else{
+                        updateAccountBalanceUseCase.updateBalance(1, oldSum - item.sum)
+                    }
                     editItemUseCase.editItem(item)
                     finishWork()
                 }
             }
-
         }
     }
 
@@ -159,6 +179,14 @@ class FinanceItemViewModel @Inject constructor(
     private fun parseIdCategory(inputCategoryId: String?): Int {
         return try {
             inputCategoryId?.trim()?.toInt() ?: 0
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+    private fun parseIdImage(inputImageId: String?): Int {
+        return try {
+            inputImageId?.trim()?.toInt() ?: 0
         } catch (e: Exception) {
             0
         }

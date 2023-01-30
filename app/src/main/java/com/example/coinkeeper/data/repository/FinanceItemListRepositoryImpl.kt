@@ -1,5 +1,6 @@
 package com.example.coinkeeper.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -23,20 +24,12 @@ class FinanceItemListRepositoryImpl @Inject constructor(
 //    private val financeListDao = AppDatabase.getInstance(application).financeListDao()
 //    private val mapper = FinanceListMapper()
 
+//    private val _balance = getAccountBalance(1)
+//    val balance: LiveData<Int>
+//        get() = _balance
+
     private val balanceLD = MutableLiveData<Int>()
-    private var balance: Int = 0
-
-
-//    private fun updateBalance(sum: Int, type: Int) {
-//        CoroutineScope(Dispatchers.Main).launch {
-//            if (type == 1) {
-//                balance += sum
-//            } else {
-//                balance -= sum
-//            }
-//            balanceLD.value = balance
-//        }
-//    }
+    //private var balance: LiveData<Int> = getAccountBalance(1)
 
     override fun getFinanceBalance(): MutableLiveData<Int> {
         return balanceLD
@@ -56,23 +49,32 @@ class FinanceItemListRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addItem(financeItem: FinanceItem) {
+        updateSum(financeItem)
+        financeListDao.addFinanceItem(mapper.mapEntityToDbModel(financeItem))
+    }
+
+    private suspend fun updateSum(financeItem: FinanceItem) {
         CoroutineScope(Dispatchers.IO).launch {
-            financeListDao.addFinanceItem(mapper.mapEntityToDbModel(financeItem))
-            //updateBalance(financeItem.sum, financeItem.typeOperation)
-            //TODO исправить баг с отображением баланса
+            when (financeItem.typeOperation) {
+                1 -> {
+                    updateAccountBalance(1, financeItem.sum)
+                }
+                0 -> {
+                    updateAccountBalance(1, -financeItem.sum)
+                }
+            }
         }
     }
 
 
     override suspend fun deleteItem(financeItem: FinanceItem) {
         financeListDao.deleteFinanceItem(financeItem.id)
-        //updateBalance(financeItem.sum, financeItem.typeOperation)
-        //balanceLD.value = -financeItem.sum
     }
 
     override suspend fun editItem(financeItem: FinanceItem) {
+        //updateSum(financeItem, true)
         financeListDao.addFinanceItem(mapper.mapEntityToDbModel(financeItem))
-        balance -= getFinanceItem(financeItem.id).sum
+
     }
 
     override suspend fun getFinanceItem(financeItemId: Int): FinanceItem {
@@ -113,11 +115,16 @@ class FinanceItemListRepositoryImpl @Inject constructor(
 
     override suspend fun updateAccountBalance(id: Int, sum: Int) {
         CoroutineScope(Dispatchers.IO).launch {
+            Log.d("repository", "update balance: $sum")
             financeListDao.updateAccountBalance(id, sum)
         }
     }
 
     override fun getAccountBalance(id: Int): LiveData<Int> {
         return financeListDao.getAccountBalance(id)
+    }
+
+    override fun getIdCategoryOperationByName(name: String): Int {
+        return financeListDao.getIdCategoryOperationByName(name)
     }
 }

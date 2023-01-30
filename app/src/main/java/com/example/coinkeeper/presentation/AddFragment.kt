@@ -2,7 +2,7 @@ package com.example.coinkeeper.presentation
 
 import android.content.Context
 import android.os.Bundle
-import android.preference.PreferenceManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,12 +38,10 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     private val binding: FragmentAddBinding
         get() = _binding ?: throw RuntimeException("FragmentAddBinding == null")
 
-
     override fun onAttach(context: Context) {
         component.inject(this)
         super.onAttach(context)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,29 +49,14 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     ): View {
         _binding = FragmentAddBinding.inflate(inflater, container, false)
         setupRecyclerView()
-        //setupBalance()
-        PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().apply {
-            putBoolean("firstStart", true)
-            apply()
-        }
         return binding.root
     }
-
-//    override fun onStart() {
-//        super.onStart()
-//        viewModelMain = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
-//        firstStart()
-//        viewModelMain.financeList.observe(this) {
-//            financeListAdapter.submitList(it)
-//        }
-//    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModelMain = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
-        //firstStart()
+        setupBalance()
 
         viewModelMain.financeList.observe(viewLifecycleOwner) {
             financeListAdapter.submitList(it)
@@ -81,17 +64,13 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         binding.viewModel = viewModelMain
         binding.lifecycleOwner = viewLifecycleOwner
         with(binding) {
-            val buttonIncomeItem = bAdd
-            val buttonExpenseItem = bMinus
-            buttonIncomeItem.setOnClickListener {
+            bAdd.setOnClickListener {
                 launchFragment(FinanceItemFragment.newInstanceAddItemIncome())
             }
-            buttonExpenseItem.setOnClickListener {
+            bMinus.setOnClickListener {
                 launchFragment(FinanceItemFragment.newInstanceAddItemExpense())
             }
-            setupBalance()
         }
-
     }
 
     override fun onEditingFinished() {
@@ -101,6 +80,10 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     private fun setupBalance() {
         val tvBalance = binding.tvBalance
         viewModelMain.accountBalance.observe(viewLifecycleOwner) {
+            Log.d("Fragment", "$it")
+            if (it == null) {
+                firstStart()
+            }
             tvBalance.text = it.toString()
         }
     }
@@ -131,6 +114,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         }
     }
 
+
     private fun setupSwipeListener(rvFinanceList: RecyclerView) {
         val callback = object : ItemTouchHelper.SimpleCallback(
             0,
@@ -150,8 +134,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 viewModelMain.deleteFinanceItem(item)
                 if (item.typeOperation == 1) {
                     viewModelMain.updateBalance(-item.sum, 0, true)
-                }
-                else {
+                } else {
                     viewModelMain.updateBalance(item.sum, 0, true)
                 }
             }
@@ -166,47 +149,138 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         }
     }
 
-    private fun firstStart(){
-//        PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
-//            if (!getBoolean("firstStart", false)){
-                val account = Account(0, "Основной", 0)
-                viewModelMain.addAccount(account)
+    private fun firstStart() {
+        val account = Account(0, "Основной", 0)
+        viewModelMain.addAccount(account)
 
-                Toast.makeText(requireContext(), "FirstLaunch", Toast.LENGTH_SHORT).show()
-                val arrayFinanceItems: ArrayList<FinanceItem> = ArrayList()
-                arrayFinanceItems.add(FinanceItem(0, "Поступление зарплаты", "", 50000, 1, "", 1))
-                arrayFinanceItems.add(FinanceItem(0, "Поступление стипендии", "", 2500, 1, "", 2))
-                arrayFinanceItems.add(FinanceItem(0, "Продажа акций", "", 15500, 1, "", 3))
-                arrayFinanceItems.add(FinanceItem(0, "Покупка курсов", "", 15000, 0, "", 6))
-                arrayFinanceItems.add(FinanceItem(0, "Зачиление кешбека", "", 1500, 1, "", 2))
-                arrayFinanceItems.add(FinanceItem(0, "Зачиление дивидендов", "", 3000, 1, "", 3))
-                arrayFinanceItems.add(FinanceItem(0, "Покупка лекарств", "", 3500, 0, "", 5))
-                arrayFinanceItems.add(FinanceItem(0, "Покупки в магазине", "", 3500, 0, "", 4))
-                arrayFinanceItems.add(FinanceItem(0, "Покупка билетов", "", 7500, 0, "", 7))
-                arrayFinanceItems.add(FinanceItem(0, "ТО Авто", "", 10500, 0, "", 4))
-                val arraySizeFinanceItems = arrayFinanceItems.size -1
-                for(i in 0..arraySizeFinanceItems) {
-                    viewModelMain.addFinanceItem(arrayFinanceItems[i])
-                }
-                val arrayCategoryOperations: ArrayList<CategoryOperation> = ArrayList()
-                arrayCategoryOperations.add(CategoryOperation(1,"Поступление зарплаты", R.drawable.zp,1 ))
-                arrayCategoryOperations.add(CategoryOperation(2,"Переводы на карту", R.drawable.card,1 ))
-                arrayCategoryOperations.add(CategoryOperation(3,"Инвестиции", R.drawable.dividend,1 ))
-                arrayCategoryOperations.add(CategoryOperation(4,"Магазины", R.drawable.store,0 ))
-                arrayCategoryOperations.add(CategoryOperation(5,"Медицина", R.drawable.medicine,0 ))
-                arrayCategoryOperations.add(CategoryOperation(6,"Образование", R.drawable.education,0 ))
-                arrayCategoryOperations.add(CategoryOperation(7,"Путешествия", R.drawable.travel,0 ))
-                arrayCategoryOperations.add(CategoryOperation(8,"Дом", R.drawable.house,0 ))
-                arrayCategoryOperations.add(CategoryOperation(9,"Автомобиль", R.drawable.car,0 ))
-                val arraySizeCategoryOperationsItems = arrayCategoryOperations.size -1
-                for(i in 0..arraySizeCategoryOperationsItems) {
-                    viewModelMain.addCategoryOperation(arrayCategoryOperations[i])
-                }
-                //account = Account(0, "Основной", 35000)
-                //viewModelMain.addAccount(account)
-//            }
-//            else{
-//                Toast.makeText(requireContext(), "SecondLaunch", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "FirstLaunch", Toast.LENGTH_SHORT).show()
+        val arrayFinanceItems: ArrayList<FinanceItem> = ArrayList()
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Поступление зарплаты",
+                "",
+                50000,
+                1,
+                "",
+                1,
+                R.drawable.card
+            )
+        )
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Поступление стипендии",
+                "",
+                2500,
+                1,
+                "",
+                2,
+                R.drawable.card
+            )
+        )
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Продажа акций",
+                "",
+                15500,
+                1,
+                "",
+                3,
+                R.drawable.dividend
+            )
+        )
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Покупка курсов",
+                "",
+                15000,
+                0,
+                "",
+                6,
+                R.drawable.education
+            )
+        )
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Зачиление кешбека",
+                "",
+                1500,
+                1,
+                "",
+                2,
+                R.drawable.card
+            )
+        )
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Зачиление дивидендов",
+                "",
+                3000,
+                1,
+                "",
+                3,
+                R.drawable.dividend
+            )
+        )
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Покупка лекарств",
+                "",
+                3500,
+                0,
+                "",
+                5,
+                R.drawable.medicine
+            )
+        )
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Покупки в магазине",
+                "",
+                3500,
+                0,
+                "",
+                4,
+                R.drawable.store
+            )
+        )
+        arrayFinanceItems.add(
+            FinanceItem(
+                0,
+                "Покупка билетов",
+                "",
+                7500,
+                0,
+                "",
+                7,
+                R.drawable.travel
+            )
+        )
+        arrayFinanceItems.add(FinanceItem(0, "ТО Авто", "", 10500, 0, "", 4, R.drawable.car))
+        for (i in 0 until arrayFinanceItems.size) {
+            viewModelMain.addFinanceItem(arrayFinanceItems[i])
+            //Sum: 32500
+        }
+        val arrayCategoryOperations: ArrayList<CategoryOperation> = ArrayList()
+        arrayCategoryOperations.add(CategoryOperation(1, "Поступление зарплаты", R.drawable.zp, 1))
+        arrayCategoryOperations.add(CategoryOperation(2, "Переводы на карту", R.drawable.card, 1))
+        arrayCategoryOperations.add(CategoryOperation(3, "Инвестиции", R.drawable.dividend, 1))
+        arrayCategoryOperations.add(CategoryOperation(4, "Магазины", R.drawable.store, 0))
+        arrayCategoryOperations.add(CategoryOperation(5, "Медицина", R.drawable.medicine, 0))
+        arrayCategoryOperations.add(CategoryOperation(6, "Образование", R.drawable.education, 0))
+        arrayCategoryOperations.add(CategoryOperation(7, "Путешествия", R.drawable.travel, 0))
+        arrayCategoryOperations.add(CategoryOperation(8, "Дом", R.drawable.house, 0))
+        arrayCategoryOperations.add(CategoryOperation(9, "Автомобиль", R.drawable.car, 0))
+        for (i in 0 until arrayCategoryOperations.size) {
+            viewModelMain.addCategoryOperation(arrayCategoryOperations[i])
+        }
     }
 
     override fun onDestroy() {

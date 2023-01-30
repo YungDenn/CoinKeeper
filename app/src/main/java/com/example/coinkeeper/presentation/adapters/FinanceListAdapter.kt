@@ -4,16 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.example.coinkeeper.R
-import com.example.coinkeeper.domain.entity.FinanceItem
 import androidx.recyclerview.widget.ListAdapter
+import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FinanceItemExpenceBinding
 import com.example.coinkeeper.databinding.FinanceItemIncomeBinding
+import com.example.coinkeeper.domain.entity.FinanceItem
 import com.example.coinkeeper.presentation.FinanceItemViewHolder
 
 
-class FinanceListAdapter :
-    ListAdapter<FinanceItem, FinanceItemViewHolder>(FinanceItemDiffCallback()) {
+class FinanceListAdapter : ListAdapter<FinanceItem, FinanceItemViewHolder>(FinanceItemDiffCallback()) {
 
     var onFinanceItemClickListener: ((FinanceItem) -> Unit)? = null
 
@@ -35,6 +34,7 @@ class FinanceListAdapter :
 
     override fun onBindViewHolder(viewHolder: FinanceItemViewHolder, position: Int) {
         val financeItem = getItem(position)
+        val imageId = financeItem.imageId
         val binding = viewHolder.binding
         binding.root.setOnClickListener {
             onFinanceItemClickListener?.invoke(financeItem)
@@ -42,12 +42,15 @@ class FinanceListAdapter :
         when(binding){
             is FinanceItemExpenceBinding -> {
                 binding.financeItem = financeItem
+                binding.imageView.setImageResource(imageId)
             }
             is FinanceItemIncomeBinding ->{
                 binding.financeItem = financeItem
+                binding.imageView.setImageResource(imageId)
             }
         }
     }
+
 
 
     override fun getItemViewType(position: Int): Int {

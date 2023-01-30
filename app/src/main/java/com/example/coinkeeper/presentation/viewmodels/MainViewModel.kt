@@ -1,5 +1,6 @@
 package com.example.coinkeeper.presentation.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,26 +27,7 @@ class MainViewModel @Inject constructor(
     private val updateAccountBalanceUseCase: UpdateAccountBalanceUseCase
 ) : ViewModel() {
 
-//    private val repository = FinanceItemListRepositoryImpl(application)
-
-    //    private val getFinanceListUseCase = GetFinanceItemListUseCase(repository)
-//    private val deleteFinanceItemUseCase = DeleteFinanceItemUseCase(repository)
-//    private val getFinanceBalanceUseCase = GetFinanceBalanceUseCase(repository)
-//    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
-//    private val addCategoryOperationUseCase = AddCategoryOperationUseCase(repository)
-//    private val getFinanceListByTypeOperationUseCase =
-//        GetFinanceListByTypeOperationUseCase(repository)
-//    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
-//    private val getFinanceListByCategoryOperationUseCase =
-//        GetFinanceListByCategoryOperationUseCase(repository)
-//    private val getAccountBalanceUseCase = GetAccountBalanceUseCase(repository)
-//    private val addAccountUseCase = AddAccountUseCase(repository)
-//    private val updateAccountBalanceUseCase = UpdateAccountBalanceUseCase(repository)
-
     val financeList = getFinanceListUseCase.getFinanceList()
-    var balanceLD = getFinanceBalanceUseCase.getFinanceBalance()
-
-
     val accountBalance = getAccountBalanceUseCase.getAccountBalance(1)
 
     fun deleteFinanceItem(financeItem: FinanceItem) {
@@ -62,18 +44,19 @@ class MainViewModel @Inject constructor(
             } else {
                 if (typeOperation == 1) {
                     updateAccountBalanceUseCase.updateBalance(1, sum)
+                    Log.d("MainViewModel", "Add sum: $sum")
                 } else {
                     updateAccountBalanceUseCase.updateBalance(1, -sum)
+                    Log.d("MainViewModel", "Add sum: $sum")
                 }
             }
         }
     }
-
-
     fun addFinanceItem(financeItem: FinanceItem) {
         viewModelScope.launch {
             addFinanceItemUseCase.addItem(financeItem)
-            updateBalance(financeItem.sum, financeItem.typeOperation, false)
+            //updateBalance(financeItem.sum, financeItem.typeOperation, false)
+            //Log.d("MainViewModel", "Add item: ${financeItem.sum}")
         }
     }
 

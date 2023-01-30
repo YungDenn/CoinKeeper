@@ -14,5 +14,6 @@ data class FinanceItemDbModel(
     val typeOperation: Int,
     val date: String,
     @ColumnInfo(name = "category_operations_id")
-    val categoryOperationId: Int
+    val categoryOperationId: Int,
+    val imageId: Int
 )

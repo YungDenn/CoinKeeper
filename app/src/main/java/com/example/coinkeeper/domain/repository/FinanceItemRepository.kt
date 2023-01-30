@@ -38,4 +38,5 @@ interface FinanceItemRepository {
 
     fun getAccountBalance(id: Int): LiveData<Int>
 
+    fun getIdCategoryOperationByName(name: String): Int
 }

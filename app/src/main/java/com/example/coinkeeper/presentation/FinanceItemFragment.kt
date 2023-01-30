@@ -23,6 +23,7 @@ import com.example.coinkeeper.domain.entity.CategoryOperation
 import com.example.coinkeeper.presentation.adapters.SpinnerAdapter
 import com.example.coinkeeper.presentation.viewmodels.FinanceItemViewModel
 import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
@@ -43,6 +44,9 @@ class FinanceItemFragment :
         (requireActivity().application as CoinKeeperApp).component
     }
 
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+
     private var _binding: FragmentFinanceItemBinding? = null
     private val binding: FragmentFinanceItemBinding
         get() = _binding ?: throw RuntimeException("FragmentFinanceItemBinding == null")
@@ -53,6 +57,7 @@ class FinanceItemFragment :
     private var financeItemId: Int = FinanceItem.ID
     private var typeOperation: Int = 0
     private lateinit var spinner: Spinner
+    private lateinit var categoryOperation: CategoryOperation
 
     private var day: Int = 0
     private var month: Int = 0
@@ -87,6 +92,14 @@ class FinanceItemFragment :
         return binding.root
     }
 
+    private fun getCategoryOperation(categoryOperationId: Int) {
+        viewModel.getCategoryOperationsById(categoryOperationId)
+        viewModel.categoryOperation.observe(viewLifecycleOwner) {
+            categoryOperation = it
+        }
+    }
+
+
     private fun initSpinner(
         spinner: Spinner,
         categoryOperationList: List<CategoryOperation>,
@@ -119,7 +132,7 @@ class FinanceItemFragment :
         viewModel = ViewModelProvider(this, viewModelFactory)[FinanceItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        spinner = binding.spinner
+        spinner = binding.spinnerCategoryOperation
         launchRightMode()
         observeViewModel()
         pickDate()
@@ -131,8 +144,9 @@ class FinanceItemFragment :
         viewModel.getCategoryOperationByType(typeOperation).observe(requireActivity()) {
             initSpinner(spinner, it, selectedItem)
         }
-
     }
+
+
 
 
     private fun launchRightMode() {
@@ -144,58 +158,72 @@ class FinanceItemFragment :
 
     private fun launchEditMode() {
 
+        var oldBalance = 0
+
         viewModel.getFinanceItem(financeItemId)
         viewModel.financeItem.observe(viewLifecycleOwner) {
+            getCategoryOperationList(it.typeOperation)
             binding.etName.setText(it.name)
             binding.etCount.setText(it.sum.toString())
             binding.etComment.setText(it.comment)
+            oldBalance += it.sum
             typeOperation = it.typeOperation
             if (it.typeOperation == 1) {
-                getCategoryOperationList(typeOperation, it.categoryOperationId - 1)
+                getCategoryOperationList(typeOperation, it.categoryOperationId-1)
             } else {
-                getCategoryOperationList(typeOperation, it.categoryOperationId - 4)
+                getCategoryOperationList(typeOperation, it.categoryOperationId-4)
             }
-            //getCategoryOperationList(typeOperation)
+            getCategoryOperation(it.categoryOperationId)
         }
 
         binding.saveButton.setOnClickListener {
-            var position = binding.spinner.selectedItemPosition
+
+            var position = binding.spinnerCategoryOperation.selectedItemPosition
             if (typeOperation == 1){
                 position += 1
             }
             else{
                 position += 4
             }
+
+
+            getCategoryOperation(position)
             viewModel.editFinanceItem(
                 binding.etName.text?.toString(),
                 binding.etCount.text?.toString(),
                 binding.etComment.text?.toString(),
-                position.toString()
+                position.toString(),
+                categoryOperation.image_id.toString(),
+                oldBalance
             )
+
         }
     }
 
 
     private fun launchAddMode() {
         getCategoryOperationList(typeOperation)
-
         binding.saveButton.setOnClickListener {
-            var position = binding.spinner.selectedItemPosition
+            var position = binding.spinnerCategoryOperation.selectedItemPosition
             if (typeOperation == 1){
                 position += 1
             }
             else{
                 position += 4
             }
-            viewModel.addFinanceItem(
-                binding.etName.text?.toString(),
-                binding.etCount.text?.toString(),
-                binding.etComment.text?.toString(),
-                typeOperation.toString(),
-                binding.etDate.text.toString(),
-                position.toString()
-            )
-
+            coroutineScope.launch {
+                getCategoryOperation(position)
+                delay(15)
+                viewModel.addFinanceItem(
+                    binding.etName.text?.toString(),
+                    binding.etCount.text?.toString(),
+                    binding.etComment.text?.toString(),
+                    typeOperation.toString(),
+                    binding.etDate.text.toString(),
+                    position.toString(),
+                    categoryOperation.image_id.toString()
+                )
+            }
         }
     }
 
@@ -249,7 +277,6 @@ class FinanceItemFragment :
             OPERATION_EXPENSE -> typeOperation = 0
             OPERATION_INCOME -> typeOperation = 1
         }
-
     }
 
 
@@ -273,6 +300,7 @@ class FinanceItemFragment :
         savedDay = dayOfMounth
         savedMonth = month + 1
         savedYear = year
+
 
         getDateTimeCalendar()
         TimePickerDialog(requireContext(), this, hour, minute, true).show()

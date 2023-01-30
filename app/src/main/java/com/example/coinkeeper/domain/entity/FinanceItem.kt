@@ -7,7 +7,8 @@ data class FinanceItem(
     val sum: Int,
     val typeOperation: Int,
     val date: String,
-    val categoryOperationId: Int
+    val categoryOperationId: Int,
+    val imageId: Int
 ) {
     companion object{
         const val ID = 0
