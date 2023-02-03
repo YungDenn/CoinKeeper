@@ -17,7 +17,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="2dp"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="15dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true">
 
@@ -49,10 +49,11 @@
                 android:layout_width="220dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:fontFamily="@font/hind_light"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@{financeItem.name}"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 tools:ignore="TextContrastCheck"
                 tools:text="Пополнение карты" />
 
@@ -61,6 +62,7 @@
                 android:layout_width="16dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:fontFamily="@font/hind_light"
                 android:gravity="center_horizontal|center_vertical|end"
                 android:text="+"
                 android:textColor="@color/black"
@@ -73,6 +75,7 @@
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@{String.valueOf(financeItem.sum)}"
                 android:textAlignment="center"
+                android:fontFamily="@font/hind_light"
                 android:textColor="@color/black"
                 android:textIsSelectable="false"
                 android:textSize="16sp"

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +21,7 @@ import com.example.coinkeeper.presentation.adapters.FinanceListAdapter
 import com.example.coinkeeper.presentation.viewmodels.MainViewModel
 import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
+
 
 class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
@@ -111,7 +113,54 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
             )
             setupSwipeListener(rvFinanceList)
             setupClickListener()
+            setupScrollListener(rvFinanceList)
         }
+    }
+
+    private fun setupScrollListener(rvFinanceList: RecyclerView) {
+        var down = true
+        var up = true
+        val animationSLideDown =
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out)
+        val animationSLideUp =
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in)
+        val animationSLideUpLeft =
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_left)
+        val animationSLideOutLeft =
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_left)
+
+        rvFinanceList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                Log.d("onScrolled", "dy: $dy")
+                if (dy > 0) {
+                    if (down) {
+                        with(binding){
+                            bAdd.startAnimation(animationSLideDown)
+                            bMinus.startAnimation(animationSLideOutLeft)
+                            bAdd.visibility = View.GONE
+                            bMinus.visibility = View.GONE
+                        }
+                        down = false
+                        up = true
+                    }
+                }
+                if (dy < 0){
+                    if (up){
+                        with(binding){
+                            bAdd.startAnimation(animationSLideUp)
+                            bMinus.startAnimation(animationSLideUpLeft)
+                            bAdd.visibility = View.VISIBLE
+                            bMinus.visibility = View.VISIBLE
+                        }
+                        up = false
+                        down = true
+                    }
+                }
+
+
+
+            }
+        })
     }
 
 
@@ -164,7 +213,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 1,
                 "",
                 1,
-                R.drawable.card
+                R.drawable.zp
             )
         )
         arrayFinanceItems.add(

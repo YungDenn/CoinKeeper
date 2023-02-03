@@ -21,18 +21,8 @@ class FinanceItemViewModel @Inject constructor(
     private val getCategoryOperationByTypeUseCase: GetCategoryOperationByTypeUseCase,
     private val updateAccountBalanceUseCase: UpdateAccountBalanceUseCase,
     private val getCategoryOperationUseCase: GetCategoryOperationUseCase,
-
 ) :ViewModel() {
 
-
-//    val repository = FinanceItemListRepositoryImpl(application)
-
-//    private val getItemUseCase = GetFinanceItemUseCase(repository)
-//    private val addFinanceItemUseCase = AddFinanceItemUseCase(repository)
-//    private val editItemUseCase = EditFinanceItemUseCase(repository)
-//    private val operationListUseCase = GetCategoryOperationListUseCase(repository)
-//    private val getCategoryOperationByTypeUseCase = GetCategoryOperationByTypeUseCase(repository)
-//    private val updateAccountBalanceUseCase = UpdateAccountBalanceUseCase(repository)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>

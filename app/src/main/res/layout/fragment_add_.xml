@@ -77,7 +77,7 @@
                 android:id="@+id/nameBill"
                 android:layout_width="185dp"
                 android:layout_height="50dp"
-
+                android:fontFamily="@font/hind_light"
                 android:gravity="center_horizontal|center_vertical"
                 android:paddingTop="10dp"
                 android:text="Cash"
@@ -98,6 +98,7 @@
                 app:srcCompat="@drawable/card" />
 
             <TextView
+                android:fontFamily="@font/hind_light"
                 android:id="@+id/tvBalance"
                 android:layout_width="185dp"
                 android:layout_height="50dp"
