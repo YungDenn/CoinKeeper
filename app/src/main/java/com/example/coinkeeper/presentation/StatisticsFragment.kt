@@ -14,22 +14,19 @@ import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.coinkeeper.databinding.FragmentStatisticsBinding
-import com.example.coinkeeper.presentation.viewmodels.MainViewModel
+import com.example.coinkeeper.presentation.viewmodels.StatisticsViewModel
 import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
 import com.github.mikephil.charting.animation.Easing
-import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.XAxis.XAxisPosition
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import javax.inject.Inject
 
 
-class StatisticsFragment () : Fragment() {
+class StatisticsFragment: Fragment() {
 
-    private  lateinit var viewModelMain: MainViewModel
+    private  lateinit var statisticsViewModel: StatisticsViewModel
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -41,7 +38,6 @@ class StatisticsFragment () : Fragment() {
     private lateinit var pieChartAll: PieChart
     private lateinit var pieChartCategoryAdd: PieChart
     private lateinit var pieChartCategoryExpense: PieChart
-    private lateinit var barChar: BarChart
     private lateinit var spinner: Spinner
     private lateinit var adapter: ArrayAdapter<*>
     private lateinit var legend: com.github.mikephil.charting.components.Legend
@@ -64,18 +60,17 @@ class StatisticsFragment () : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
-        viewModelMain = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+        statisticsViewModel = ViewModelProvider(this, viewModelFactory)[StatisticsViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         pieChartCategoryAdd = binding.pieChartCategoryAdd
         pieChartCategoryExpense = binding.pieChartCategoryExpense
-        barChar = binding.barChart
         pieChartAll = binding.pieChartAllOperation
         setupSpinner()
         return binding.root
     }
 
     private fun setupSpinner() {
-        spinner = binding.spinner2
+        spinner = binding.spinnerStatistics
         adapter = ArrayAdapter.createFromResource(
             requireContext(), com.example.coinkeeper.R.array.spinner_items,
             R.layout.simple_spinner_item
@@ -108,72 +103,9 @@ class StatisticsFragment () : Fragment() {
         }
     }
 
-    private fun setupBarChart() {
-        if (barChar.isGone) {
-            pieChartCategoryAdd.isGone = true
-            pieChartAll.isGone = true
-            barChar.isGone = false
-            pieChartCategoryExpense.isGone = true
-        }
-        barChar.description.isEnabled = false
-        barChar.setPinchZoom(true)
-
-        barChar.setDrawBarShadow(false)
-        barChar.setDrawGridBackground(false)
-
-        val xAxis: XAxis = barChar.xAxis
-        xAxis.position = XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        barChar.axisLeft.setDrawGridLines(false)
-        barChar.animateY(1500)
-        barChar.legend.isEnabled = true
-        barChar.setNoDataText("Данные не обнаружены!")
-        barChar.setFitBars(true)
-        loadBarChartData()
-
-    }
-
-    private fun loadBarChartData() {
-        val entries: ArrayList<BarEntry> = ArrayList()
-        entries.add(BarEntry(1f, 3f, "wasd1"))
-        entries.add(BarEntry(2f, 5f, "wasd2"))
-        entries.add(BarEntry(3f, 3f, "wasd3"))
-        entries.add(BarEntry(4f, 6f, "wasd4"))
-        entries.add(BarEntry(5f, 4f, "wasd5"))
-        entries.add(BarEntry(6f, 2f, "wasd6"))
-        entries.add(BarEntry(7f, 5f, "wasd7"))
-
-        val colors: ArrayList<Int> = ArrayList()
-        for (color in ColorTemplate.MATERIAL_COLORS) {
-            colors.add(color)
-        }
-        for (color in ColorTemplate.VORDIPLOM_COLORS) {
-            colors.add(color)
-        }
-        val dataSet = BarDataSet(entries, "Доходы")
-        dataSet.colors = colors
-        val data = BarData(dataSet)
-        data.setDrawValues(true)
-        data.setValueFormatter(PercentFormatter(pieChartCategoryAdd))
-        data.setValueTextSize(12f)
-        data.setValueTextColor(Color.BLACK)
-        barChar.data = data
-        barChar.invalidate()
-        barChar.animateY(1400, Easing.EaseInOutQuad)
-        legend = barChar.legend
-        legend.verticalAlignment = com.github.mikephil.charting.components.Legend
-            .LegendVerticalAlignment.TOP
-        legend.horizontalAlignment = com.github.mikephil.charting.components.Legend
-            .LegendHorizontalAlignment.RIGHT
-        legend.textSize = 15f
-
-
-    }
-
     private fun setupPieChartCategoryAdd() {
         if (pieChartCategoryAdd.isGone) {
             pieChartCategoryAdd.isGone = false
-            barChar.isGone = true
             pieChartAll.isGone = true
             pieChartCategoryExpense.isGone = true
 
@@ -214,10 +146,10 @@ class StatisticsFragment () : Fragment() {
         for (color in ColorTemplate.VORDIPLOM_COLORS) {
             colors.add(color)
         }
-        viewModelMain.getCategoryOperationByType(1).observe(this) { category->
+        statisticsViewModel.getCategoryOperationByType(1).observe(this) { category->
             category.forEach { category ->
                 //categoryOperation.add(it)
-                viewModelMain.getFinanceItemByCategoryOperation(category.id).observe(this){items ->
+                statisticsViewModel.getFinanceItemByCategoryOperation(category.id).observe(this){ items ->
                     items.forEach{
                         financeItems.add(it.sum)
                     }
@@ -241,7 +173,6 @@ class StatisticsFragment () : Fragment() {
         if (pieChartCategoryExpense.isGone) {
             pieChartCategoryExpense.isGone = false
             pieChartCategoryAdd.isGone = true
-            barChar.isGone = true
             pieChartAll.isGone = true
         }
         pieChartCategoryExpense.isDrawHoleEnabled = true
@@ -275,10 +206,10 @@ class StatisticsFragment () : Fragment() {
         for (color in ColorTemplate.VORDIPLOM_COLORS) {
             colors.add(color)
         }
-        viewModelMain.getCategoryOperationByType(0).observe(this) { category->
+        statisticsViewModel.getCategoryOperationByType(0).observe(this) { category->
             category.forEach { category ->
                 //categoryOperation.add(it)
-                viewModelMain.getFinanceItemByCategoryOperation(category.id).observe(this){items ->
+                statisticsViewModel.getFinanceItemByCategoryOperation(category.id).observe(this){ items ->
                     items.forEach{
                         financeItems.add(it.sum)
                     }
@@ -302,7 +233,6 @@ class StatisticsFragment () : Fragment() {
     private fun setupPieChartAll() {
         if (pieChartAll.isGone) {
             pieChartAll.isGone = false
-            barChar.isGone = true
             pieChartCategoryAdd.isGone = true
             pieChartCategoryExpense.isGone = true
         }
@@ -339,17 +269,17 @@ class StatisticsFragment () : Fragment() {
         val entriesForExpense: ArrayList<Int> = ArrayList()
         val result: ArrayList<PieEntry> = ArrayList()
 
-        viewModelMain.financeList.observe(this) {
+        statisticsViewModel.financeList.observe(this) {
             entriesForAdd.clear()
             entriesForExpense.clear()
             result.clear()
-            viewModelMain.getFinanceItemListByTypeOperation(1).observe(this) { addEntries ->
+            statisticsViewModel.getFinanceItemListByTypeOperation(1).observe(this) { addEntries ->
                 //entriesForAdd.clear()
                 addEntries.forEach { item ->
                     entriesForAdd.add(item.sum)
                 }
                 result.add(PieEntry(entriesForAdd.sum().toFloat(), "Доходы"))
-                viewModelMain.getFinanceItemListByTypeOperation(0).observe(this) { expenseEntries ->
+                statisticsViewModel.getFinanceItemListByTypeOperation(0).observe(this) { expenseEntries ->
                     //entriesForExpense.clear()
                     expenseEntries.forEach { item ->
                         entriesForExpense.add(item.sum)

@@ -14,14 +14,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getFinanceListUseCase: GetFinanceItemListUseCase,
     private val deleteFinanceItemUseCase: DeleteFinanceItemUseCase,
-    private val getFinanceBalanceUseCase: GetFinanceBalanceUseCase,
     private val addFinanceItemUseCase: AddFinanceItemUseCase,
     private val addCategoryOperationUseCase: AddCategoryOperationUseCase,
-    private val getFinanceListByTypeOperationUseCase:
-        GetFinanceListByTypeOperationUseCase,
     private val getCategoryOperationByTypeUseCase : GetCategoryOperationByTypeUseCase,
-    private val getFinanceListByCategoryOperationUseCase :
-        GetFinanceListByCategoryOperationUseCase,
     private val getAccountBalanceUseCase : GetAccountBalanceUseCase,
     private val addAccountUseCase : AddAccountUseCase,
     private val updateAccountBalanceUseCase: UpdateAccountBalanceUseCase
@@ -64,17 +59,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getFinanceItemListByTypeOperation(typeOperation: Int): LiveData<List<FinanceItem>> {
-        return getFinanceListByTypeOperationUseCase.getFinanceItemListByTypeOperation(typeOperation)
-    }
-
     fun getCategoryOperationByType(typeOperation: Int): LiveData<List<CategoryOperation>> {
         return getCategoryOperationByTypeUseCase.getCategoryOperationByType(typeOperation)
     }
 
-    fun getFinanceItemByCategoryOperation(idCategory: Int): LiveData<List<FinanceItem>> {
-        return getFinanceListByCategoryOperationUseCase.getFinanceListByCategoryOperation(idCategory)
-    }
 
     fun addAccount(account: Account) {
         viewModelScope.launch {
