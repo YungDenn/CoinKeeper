@@ -17,7 +17,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="2dp"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="15dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true">
 
@@ -50,10 +50,12 @@
                 android:layout_width="220dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:fontFamily="@font/hind_light"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@{financeItem.name}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 tools:ignore="TextContrastCheck"
                 tools:text="Снятие с карты" />
 
@@ -61,6 +63,7 @@
                 android:id="@+id/tv_minus"
                 android:layout_width="15dp"
                 android:layout_height="match_parent"
+                android:fontFamily="@font/hind_light"
                 android:layout_weight="1"
                 android:gravity="center_horizontal|center_vertical|end"
                 android:text="-"
@@ -71,6 +74,7 @@
                 android:id="@+id/tv_sum"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
+                android:fontFamily="@font/hind_light"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@{String.valueOf(financeItem.sum)}"
                 android:textAlignment="center"

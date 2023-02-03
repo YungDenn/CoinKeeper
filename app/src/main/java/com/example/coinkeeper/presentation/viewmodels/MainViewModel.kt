@@ -55,8 +55,6 @@ class MainViewModel @Inject constructor(
     fun addFinanceItem(financeItem: FinanceItem) {
         viewModelScope.launch {
             addFinanceItemUseCase.addItem(financeItem)
-            //updateBalance(financeItem.sum, financeItem.typeOperation, false)
-            //Log.d("MainViewModel", "Add item: ${financeItem.sum}")
         }
     }
 
