@@ -7,6 +7,7 @@
     <string name="error_input_count">Неверное число</string>
     <string name="error_input_name">Неверное название</string>
     <string name="current_date">Дата: %1$s</string>
-
-
+    <string name="text_for_spinner_for_add_and_expense">Отношение затрат к доходам</string>
+    <string name="text_for_spinner_for_add_categories">Поступления по категорям</string>
+    <string name="text_for_spinner_for_expense_categories">Затраты по категорям</string>
 </resources>

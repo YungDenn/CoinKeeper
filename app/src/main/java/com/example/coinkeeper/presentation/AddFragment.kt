@@ -20,6 +20,7 @@ import com.example.coinkeeper.domain.entity.FinanceItem
 import com.example.coinkeeper.presentation.adapters.FinanceListAdapter
 import com.example.coinkeeper.presentation.viewmodels.MainViewModel
 import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
@@ -28,6 +29,8 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
     private lateinit var financeListAdapter: FinanceListAdapter
 
     private lateinit var viewModelMain: MainViewModel
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -58,7 +61,10 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
         super.onViewCreated(view, savedInstanceState)
         viewModelMain = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
-        setupBalance()
+        coroutineScope.launch {
+            setupBalance()
+        }
+
 
         viewModelMain.financeList.observe(viewLifecycleOwner) {
             financeListAdapter.submitList(it)
@@ -312,7 +318,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 R.drawable.travel
             )
         )
-        arrayFinanceItems.add(FinanceItem(0, "ТО Авто", "", 10500, 0, "", 4, R.drawable.car))
+        arrayFinanceItems.add(FinanceItem(0, "ТО Авто", "", 10500, 0, "", 9, R.drawable.car))
         for (i in 0 until arrayFinanceItems.size) {
             viewModelMain.addFinanceItem(arrayFinanceItems[i])
             //Sum: 32500
@@ -331,7 +337,6 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
             viewModelMain.addCategoryOperation(arrayCategoryOperations[i])
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

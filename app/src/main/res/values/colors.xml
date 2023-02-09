@@ -13,4 +13,5 @@
     <color name="addB_color">#89FF00</color>
     <color name ="fields_grey">#CBC6C6C6</color>
     <color name ="finance_item">#FBFBFB</color>
+    <color name ="whole">#FF80DEEA</color>
 </resources>
