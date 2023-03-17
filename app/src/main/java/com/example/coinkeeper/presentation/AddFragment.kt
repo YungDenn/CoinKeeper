@@ -117,6 +117,10 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 FinanceListAdapter.VIEW_TYPE_EXPENSE,
                 FinanceListAdapter.MAX_POOL_SIZE
             )
+            recycledViewPool.setMaxRecycledViews(
+                FinanceListAdapter.VIEW_TYPE_SEPARATOR,
+                FinanceListAdapter.MAX_POOL_SIZE
+            )
             setupSwipeListener(rvFinanceList)
             setupClickListener()
             setupScrollListener(rvFinanceList)
@@ -137,7 +141,6 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
 
         rvFinanceList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                Log.d("onScrolled", "dy: $dy")
                 if (dy > 0) {
                     if (down) {
                         with(binding){
@@ -162,9 +165,6 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                         down = true
                     }
                 }
-
-
-
             }
         })
     }
@@ -217,7 +217,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 50000,
                 1,
-                "",
+                "20.10.2022 11:40",
                 1,
                 R.drawable.zp
             )
@@ -229,7 +229,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 2500,
                 1,
-                "",
+                "21.10.2022 12:40",
                 2,
                 R.drawable.card
             )
@@ -241,7 +241,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 15500,
                 1,
-                "",
+                "08.03.2023 11:43",
                 3,
                 R.drawable.dividend
             )
@@ -253,7 +253,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 15000,
                 0,
-                "",
+                "09.03.2023 11:10",
                 6,
                 R.drawable.education
             )
@@ -265,7 +265,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 1500,
                 1,
-                "",
+                "22.10.2022 11:33",
                 2,
                 R.drawable.card
             )
@@ -277,7 +277,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 3000,
                 1,
-                "",
+                "20.10.2022 11:40",
                 3,
                 R.drawable.dividend
             )
@@ -289,7 +289,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 3500,
                 0,
-                "",
+                "21.10.2022 11:42",
                 5,
                 R.drawable.medicine
             )
@@ -301,7 +301,7 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 3500,
                 0,
-                "",
+                "21.10.2022 12:40",
                 4,
                 R.drawable.store
             )
@@ -313,12 +313,12 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                 "",
                 7500,
                 0,
-                "",
+                "22.10.2022 11:50",
                 7,
                 R.drawable.travel
             )
         )
-        arrayFinanceItems.add(FinanceItem(0, "ТО Авто", "", 10500, 0, "", 9, R.drawable.car))
+        arrayFinanceItems.add(FinanceItem(0, "ТО Авто", "", 10500, 0, "22.10.2022 11:33", 9, R.drawable.car))
         for (i in 0 until arrayFinanceItems.size) {
             viewModelMain.addFinanceItem(arrayFinanceItems[i])
             //Sum: 32500

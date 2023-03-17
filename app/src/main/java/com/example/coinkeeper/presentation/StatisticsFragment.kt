@@ -27,8 +27,6 @@ import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 
@@ -37,7 +35,6 @@ class StatisticsFragment : Fragment() {
     private lateinit var statisticsViewModel: StatisticsViewModel
 
     private lateinit var financeListAdapter: FinanceListAdapter
-
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -121,7 +118,6 @@ class StatisticsFragment : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
         }
     }
@@ -142,6 +138,7 @@ class StatisticsFragment : Fragment() {
                 entries.clear()
                 idCategories.clear()
                 pieChartCategory.data = null
+                Log.d("getFinanceItemByCategoryOperation", "category - $categories")
 
                 categories.forEach { category ->
                     Log.d("getFinanceItemByCategoryOperation", "category - $category")
@@ -183,7 +180,6 @@ class StatisticsFragment : Fragment() {
         pieChartCategory.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 Log.d("onValueSelected", "h - ${h?.x.toString()} entire: $e")
-
                 val selectedCategoryId = idCategories[h?.x?.toInt() ?: 0]
                 statisticsViewModel.getFinanceItemByCategoryOperation(selectedCategoryId)
                     .observe(viewLifecycleOwner) {
@@ -194,8 +190,6 @@ class StatisticsFragment : Fragment() {
             override fun onNothingSelected() {}
         })
     }
-
-
     private fun setupPieChartIncomeAndExpenses(loadData: Int) {
 
         pieChartCategory.apply {
@@ -217,7 +211,6 @@ class StatisticsFragment : Fragment() {
             description.isEnabled = false
 
             setHoleColor(R.color.black)
-
         }
 
         legend = pieChartCategory.legend
@@ -235,8 +228,6 @@ class StatisticsFragment : Fragment() {
             1 -> loadPieChartDataForAdd(1)
             2 -> loadPieChartDataForAdd(0)
         }
-
-
     }
 
     //Загрузка диаграммы с отношением количества доходов к количеству расходов
@@ -254,6 +245,7 @@ class StatisticsFragment : Fragment() {
             val fianceItemListExpense: ArrayList<FinanceItem> = ArrayList()
             val fianceItemListAdd: ArrayList<FinanceItem> = ArrayList()
 
+            Log.d("getFinanceItemByCategoryOperation", "Finance List: - $financeList")
             financeList.forEach { item ->
                 if (item.typeOperation == 1) {
                     entriesForAdd.add(item.sum)
@@ -281,16 +273,13 @@ class StatisticsFragment : Fragment() {
             pieChartCategory.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
                 override fun onValueSelected(e: Entry?, h: Highlight?) {
                     if (h?.x == 1.0f) {
-
                         financeListAdapter.submitList(fianceItemListExpense)
                         Toast.makeText(requireContext(), "Sum: ${entriesForExpense.sum()}", Toast.LENGTH_SHORT).show()
                     } else {
                         financeListAdapter.submitList(fianceItemListAdd)
                         Toast.makeText(requireContext(), "Sum: ${entriesForAdd.sum()}", Toast.LENGTH_SHORT).show()
-
                     }
                 }
-
                 override fun onNothingSelected() {
                 }
             })

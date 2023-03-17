@@ -105,7 +105,8 @@ class FinanceItemViewModel @Inject constructor(
         inputComment: String?,
         inputCategoryId: String?,
         inputImageId: String?,
-        oldSum: Int
+        oldSum: Int,
+        inputDate: String?
     ) {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
@@ -113,6 +114,7 @@ class FinanceItemViewModel @Inject constructor(
         val categoryOperationId = parseIdCategory(inputCategoryId)
         val imageId = parseIdImage(inputImageId)
         val fieldsIsValid = validateInput(name, count)
+        val date = parseDate(inputDate)
         if (fieldsIsValid) {
             _financeItem.value?.let {// Если объект не равен null
                 viewModelScope.launch {
@@ -121,7 +123,8 @@ class FinanceItemViewModel @Inject constructor(
                         sum = count,
                         comment = comment,
                         categoryOperationId = categoryOperationId,
-                        imageId = imageId
+                        imageId = imageId,
+                        date = date
                     )
                     if (item.typeOperation==1) {
                         updateAccountBalanceUseCase.updateBalance(1, item.sum - oldSum)

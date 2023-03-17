@@ -7,30 +7,25 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.coinkeeper.R
 import com.example.coinkeeper.databinding.FragmentFinanceItemBinding
-import com.example.coinkeeper.domain.entity.FinanceItem
-import java.lang.RuntimeException
-import java.text.SimpleDateFormat
-import java.util.*
 import com.example.coinkeeper.domain.entity.CategoryOperation
+import com.example.coinkeeper.domain.entity.FinanceItem
 import com.example.coinkeeper.presentation.adapters.SpinnerAdapter
 import com.example.coinkeeper.presentation.viewmodels.FinanceItemViewModel
 import com.example.coinkeeper.presentation.viewmodels.ViewModelFactory
 import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 
-class FinanceItemFragment :
-    Fragment(),
-    DatePickerDialog.OnDateSetListener,
-    TimePickerDialog.OnTimeSetListener {
+class FinanceItemFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private lateinit var viewModel: FinanceItemViewModel
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
@@ -39,19 +34,14 @@ class FinanceItemFragment :
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-
     private val component by lazy {
         (requireActivity().application as CoinKeeperApp).component
     }
-
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
 
     private var _binding: FragmentFinanceItemBinding? = null
     private val binding: FragmentFinanceItemBinding
         get() = _binding ?: throw RuntimeException("FragmentFinanceItemBinding == null")
-
-    //private var mPosition = 0
 
     private var screenMode: String = MODE_UNKNOWN
     private var financeItemId: Int = FinanceItem.ID
@@ -59,17 +49,10 @@ class FinanceItemFragment :
     private lateinit var spinner: Spinner
     private lateinit var categoryOperation: CategoryOperation
 
-    private var day: Int = 0
-    private var month: Int = 0
-    private var year: Int = 0
-    private var hour: Int = 0
-    private var minute: Int = 0
+    private val calendar = Calendar.getInstance().apply {
+        timeInMillis = System.currentTimeMillis()
+    }
 
-    private var savedDay: Int = 0
-    private var savedMonth: Int = 0
-    private var savedYear: Int = 0
-    private var savedHour: Int = 0
-    private var savedMinute: Int = 0
 
 
     override fun onAttach(context: Context) {
@@ -98,8 +81,6 @@ class FinanceItemFragment :
             categoryOperation = it
         }
     }
-
-
     private fun initSpinner(
         spinner: Spinner,
         categoryOperationList: List<CategoryOperation>,
@@ -114,14 +95,8 @@ class FinanceItemFragment :
                     view: View?,
                     position: Int,
                     id: Long
-                ) {
-                    //mPosition = position
-                    //Toast.makeText(requireContext(),"Item Selected: ${categoryOperationList[position].name}", Toast.LENGTH_SHORT ).show()
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                }
+                ) {}
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
             })
         spinner.setSelection(selectedItem)
     }
@@ -145,10 +120,6 @@ class FinanceItemFragment :
             initSpinner(spinner, it, selectedItem)
         }
     }
-
-
-
-
     private fun launchRightMode() {
         when (screenMode) {
             MODE_EDIT -> launchEditMode()
@@ -157,9 +128,7 @@ class FinanceItemFragment :
     }
 
     private fun launchEditMode() {
-
         var oldBalance = 0
-
         viewModel.getFinanceItem(financeItemId)
         viewModel.financeItem.observe(viewLifecycleOwner) {
             getCategoryOperationList(it.typeOperation)
@@ -169,9 +138,9 @@ class FinanceItemFragment :
             oldBalance += it.sum
             typeOperation = it.typeOperation
             if (it.typeOperation == 1) {
-                getCategoryOperationList(typeOperation, it.categoryOperationId-1)
+                getCategoryOperationList(typeOperation, it.categoryOperationId - 1)
             } else {
-                getCategoryOperationList(typeOperation, it.categoryOperationId-4)
+                getCategoryOperationList(typeOperation, it.categoryOperationId - 4)
             }
             getCategoryOperation(it.categoryOperationId)
         }
@@ -179,14 +148,11 @@ class FinanceItemFragment :
         binding.saveButton.setOnClickListener {
 
             var position = binding.spinnerCategoryOperation.selectedItemPosition
-            if (typeOperation == 1){
+            if (typeOperation == 1) {
                 position += 1
-            }
-            else{
+            } else {
                 position += 4
             }
-
-
             getCategoryOperation(position)
             viewModel.editFinanceItem(
                 binding.etName.text?.toString(),
@@ -194,21 +160,19 @@ class FinanceItemFragment :
                 binding.etComment.text?.toString(),
                 position.toString(),
                 categoryOperation.image_id.toString(),
-                oldBalance
+                oldBalance,
+                binding.etDate.text?.toString()
             )
-
         }
     }
-
 
     private fun launchAddMode() {
         getCategoryOperationList(typeOperation)
         binding.saveButton.setOnClickListener {
             var position = binding.spinnerCategoryOperation.selectedItemPosition
-            if (typeOperation == 1){
+            if (typeOperation == 1) {
                 position += 1
-            }
-            else{
+            } else {
                 position += 4
             }
             coroutineScope.launch {
@@ -245,7 +209,6 @@ class FinanceItemFragment :
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 viewModel.resetErrorInputCount()
             }
-
             override fun afterTextChanged(p0: Editable?) {}
         })
     }
@@ -279,47 +242,39 @@ class FinanceItemFragment :
         }
     }
 
-
-    private fun getDateTimeCalendar() {
-        val calendar = Calendar.getInstance()
-        day = calendar.get(Calendar.DAY_OF_MONTH)
-        month = calendar.get(Calendar.MONTH)
-        year = calendar.get(Calendar.YEAR)
-        hour = calendar.get(Calendar.HOUR_OF_DAY)
-        minute = calendar.get(Calendar.MINUTE)
-    }
-
     private fun pickDate() {
         binding.etDate.setOnClickListener {
-            getDateTimeCalendar()
-            DatePickerDialog(requireContext(), this, year, month, day).show()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            DatePickerDialog(requireContext(), this, year, month, day ).show()
         }
     }
 
     override fun onDateSet(p0: DatePicker?, year: Int, month: Int, dayOfMounth: Int) {
-        savedDay = dayOfMounth
-        savedMonth = month + 1
-        savedYear = year
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMounth)
+        calendar.set(Calendar.MONTH, month)
 
-
-        getDateTimeCalendar()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
         TimePickerDialog(requireContext(), this, hour, minute, true).show()
     }
 
     override fun onTimeSet(p0: TimePicker?, hourOfDay: Int, minute: Int) {
-        savedHour = hourOfDay
-        savedMinute = minute
-        val dateText = "$savedDay/$savedMonth $savedHour:$savedMinute"
-        val selectedDate = getString(R.string.current_date, dateText)
-        binding.etDate.text = selectedDate
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        calendar.set(Calendar.MINUTE, minute)
+        val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val selectedDateTime = "${dateFormat.format(calendar.time)} ${timeFormat.format(calendar.time)}"
+        binding.etDate.text = selectedDateTime
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun setThisMoment() {
-        val sdf = SimpleDateFormat("dd/MM kk:mm")
+        val sdf = SimpleDateFormat("dd.MM.yyyy kk:mm")
         val currentDate = sdf.format(Date())
-        val dateToET = getString(R.string.current_date, currentDate.toString())
-        binding.etDate.text = dateToET
+        binding.etDate.text = currentDate.toString()
     }
 
     interface OnEditingFinishedListener {
@@ -362,6 +317,5 @@ class FinanceItemFragment :
                 }
             }
         }
-
     }
 }
