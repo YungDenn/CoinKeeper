@@ -121,8 +121,6 @@ class StatisticsFragment : Fragment() {
             }
         }
     }
-
-
     private fun loadPieChartDataForAdd(add: Int) {
         val financeItems: ArrayList<Int> = ArrayList()
         val entries: ArrayList<PieEntry> = ArrayList()
@@ -132,6 +130,7 @@ class StatisticsFragment : Fragment() {
         for (color in ColorTemplate.MATERIAL_COLORS) {
             colors.add(color)
         }
+
 
         statisticsViewModel.getCategoryOperationByType(add)
             .observe(viewLifecycleOwner) { categories ->

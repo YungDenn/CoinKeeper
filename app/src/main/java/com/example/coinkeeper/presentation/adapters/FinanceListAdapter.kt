@@ -1,5 +1,6 @@
 package com.example.coinkeeper.presentation.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -52,30 +53,53 @@ class FinanceListAdapter :
                 binding.imageView.setImageResource(imageId)
             }
             is FinanceItemDateSeparatorBinding -> {
-                binding.date.text = financeItem.date.substring(0, 10)
+                binding.date.text = when (financeItem.date) {
+                    "today" -> "Today"
+                    "yesterday" -> "Yesterday"
+                    else -> financeItem.date.substring(0, 10)
+                }
                 binding.root.setOnClickListener(null)
             }
         }
     }
 
+
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
         val prevItem = if (position > 0) getItem(position - 1) else null
-        return if (prevItem == null || item.date.substring(0, 10) != prevItem.date.substring(0, 10)
-        ) {
-            VIEW_TYPE_SEPARATOR
-        } else if (item.typeOperation == 1) {
-            VIEW_TYPE_INCOME
-        } else {
-            VIEW_TYPE_EXPENSE
+//        return if (prevItem == null || item.date.substring(0, 10) != prevItem.date.substring(0, 10)
+//        ) {
+//            VIEW_TYPE_SEPARATOR
+//        } else if (item.typeOperation == 1) {
+//            VIEW_TYPE_INCOME
+//        } else {
+//            VIEW_TYPE_EXPENSE
+//        }
+        Log.d("FinanceItemAdapter", "item date: ${item.date}")
+        Log.d("FinanceItemAdapter", "prevItem date: ${prevItem?.date ?: ""}")
+        return when (item.typeOperation) {
+            -1 -> VIEW_TYPE_SEPARATOR
+            1 -> VIEW_TYPE_INCOME
+            else -> VIEW_TYPE_EXPENSE
         }
     }
 
     override fun submitList(list: List<FinanceItem>?) {
+        Log.d("FinanceListAdapter", "$list")
+        val todayCalendar = Calendar.getInstance()
+        val today = todayCalendar.time
+
+        val yesterdayCalendar = Calendar.getInstance()
+        yesterdayCalendar.add(Calendar.DAY_OF_YEAR, -1)
+        val yesterday = yesterdayCalendar.time
+
         if (list == null) return
 
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
         val sortedList = list.sortedByDescending { dateFormat.parse(it.date.substring(0, 10)) }
+
+        val todayString = dateFormat.format(today)
+        val yesterdayString = dateFormat.format(yesterday)
 
         val groupedAndSeparatedList = mutableListOf<FinanceItem>()
         var prevDate: String? = null
@@ -83,10 +107,16 @@ class FinanceListAdapter :
         for (item in sortedList) {
             val currDate = item.date.substring(0, 10)
             if (currDate != prevDate) {
-                if (groupedAndSeparatedList.size > 1 && groupedAndSeparatedList[0].date == groupedAndSeparatedList[1].date) {
-                    groupedAndSeparatedList.removeAt(0)
+                if (currDate == todayString) {
+                    groupedAndSeparatedList.add(FinanceItem(-1, "", "", 0, -1, "today", 1, 0))
+                } else if (currDate == yesterdayString) {
+                    groupedAndSeparatedList.add(FinanceItem(-1, "", "", 0, -1, "yesterday", 1, 0))
+                } else {
+                    if (groupedAndSeparatedList.size > 1 && groupedAndSeparatedList[0].date == groupedAndSeparatedList[1].date) {
+                        groupedAndSeparatedList.removeAt(0)
+                    }
+                    groupedAndSeparatedList.add(FinanceItem(-1, "", "", 0, -1, currDate, 1, 0))
                 }
-                groupedAndSeparatedList.add(FinanceItem(-1, "", "", 0, -1, currDate, 1, 0))
                 prevDate = currDate
             }
             groupedAndSeparatedList.add(item)
@@ -98,6 +128,7 @@ class FinanceListAdapter :
     }
 
 
+
     companion object {
         const val VIEW_TYPE_INCOME = 100
         const val VIEW_TYPE_EXPENSE = 101
@@ -105,5 +136,3 @@ class FinanceListAdapter :
         const val MAX_POOL_SIZE = 30
     }
 }
-
-

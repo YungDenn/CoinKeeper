@@ -1,6 +1,7 @@
 package com.example.coinkeeper.presentation
 
 import android.content.Context
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -191,6 +192,23 @@ class AddFragment : Fragment(), FinanceItemFragment.OnEditingFinishedListener {
                     viewModelMain.updateBalance(-item.sum, 0, true)
                 } else {
                     viewModelMain.updateBalance(item.sum, 0, true)
+                }
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val item = financeListAdapter.currentList[viewHolder.adapterPosition]
+                if (item.name == "") {
+                    super.onChildDraw(c, recyclerView, viewHolder, 0f, dY, actionState, isCurrentlyActive)
+                } else {
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
                 }
             }
         }
